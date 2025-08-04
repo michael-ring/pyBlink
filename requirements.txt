@@ -1,0 +1,7 @@
+PySide6
+platformdirs
+astropy
+auto-stretch
+rclone-python
+pillow
+opencv-python
