@@ -47,7 +47,7 @@ class MainWindow(QMainWindow):
     except:
       self.config = {}
       self.config["S3BucketName"] = "uploadsla"
-      self.config["username"] = os.getlogin()
+      self.config["username"] = get_username()
       self.config["lastUsedLocalDir"] = os.getcwd()
       self.config["lastUsedS3Dir"] = config["S3BucketName"] + ":/"
       self.config["shortNames"] = {}
@@ -105,12 +105,14 @@ class MainWindow(QMainWindow):
     self.workingDirectory = Path(QFileDialog.getExistingDirectory(self, "Select Directory"),dir=Path(self.config['lastUsedLocalDir']))
     if self.workingDirectory != '.':
       self.config["lastUsedLocalDir"] = self.workingDirectory
+      print(f"Working Directory: {self.workingDirectory}")
       self.images.clear()
       for file in self.workingDirectory.rglob("*.fits"):
         if 'site-packages' in str(file.parent):
           continue
         image = {}
         image['fullPath'] = file
+        print(f"Loading Fits Data from File: {file}")
         header = fits.getheader(image['fullPath'])
         image['filter'] = header['FILTER']
         if "BAYERPAT" in header:
@@ -130,10 +132,12 @@ class MainWindow(QMainWindow):
         image['startrails'] = ""
         index = f"{image['object']} {image['filter']} {image['date']}"
         image['cachePath'] = (self.cacheDirectory / image['telescope'] / image['object'] / file.name).with_suffix('.jpg')
+        print(f"Fits Reading done, Image Index is : {index}")
         image['detailsCachePath'] = image['cachePath'].with_stem(image['cachePath'].stem + '-aberration')
         if not image['cachePath'].parent.exists():
           image['cachePath'].parent.mkdir(parents=True, exist_ok=True)
         if not image['cachePath'].exists():
+          print(f"Creating {image['cachePath']}")
           data = fits.getdata(image['fullPath'], ext=0)
           if 'bayerpat' in image:
             debayered = cv2.cvtColor(data, cv2.COLOR_BayerBGGR2BGR)
@@ -154,6 +158,7 @@ class MainWindow(QMainWindow):
           im.save(image['cachePath'])
 
         if not image['detailsCachePath'].exists():
+          print(f"Creating {image['detailsCachePath']}")
           im = Image.open(image['cachePath'])
           new_im = Image.new('RGB', (600, 600))
           im_crop = im.crop((0, 0, 200, 200))
@@ -180,19 +185,22 @@ class MainWindow(QMainWindow):
           new_im.save(image['detailsCachePath'])
         self.images[index] = image
       self.images = dict(sorted(self.images.items()))
+      print(f"Found {len(self.images)} images")
       if len(self.images) > 0:
         statusfile = self.images[next(iter(self.images))]['cachePath'].parent / f'status-{userName}.json'
         if statusfile.exists():
+          print("Loading status from {statusfile}")
           statusImages = json.load(open(statusfile))
           for index in statusImages:
             if index in self.images:
               self.images[index]['status'] = statusImages[index]['status']
               self.images[index]['startrails'] = statusImages[index]['startrails']
-
+      print(f"populating tableWidget")
       self.ui.tableWidget.clearContents()
       self.ui.tableWidget.setRowCount(len(self.images))
       position=0
       for index,image in self.images.items():
+        print(f"Index {index} filled with {image}")
         self.ui.tableWidget.setItem(position, 0, QTableWidgetItem(image['date']))
         self.ui.tableWidget.setItem(position, 1, QTableWidgetItem(image['object']))
         self.ui.tableWidget.setItem(position, 2, QTableWidgetItem(image['filter']))
