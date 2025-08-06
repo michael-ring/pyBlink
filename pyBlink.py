@@ -28,7 +28,12 @@ class MainWindow(QMainWindow):
 
     screensize = self.screen().size()
     self.resize(screensize.width(), screensize.height())
-    self.ui.graphicsView.setMinimumSize(screensize.width()-self.ui.detailsView.width()-4,(screensize.width()-self.ui.detailsView.width()-4)*2//3)
+    newHeightOfGraphicsView = (screensize.width()-self.ui.detailsView.width()-4)*2//3
+    if newHeightOfGraphicsView > screensize.height()-300:
+      self.ui.graphicsView.setMinimumSize((screensize.height()-300)*3//2,screensize.height()-300)
+      self.ui.graphicsView.setMaximumSize((screensize.height()-300)*3//2,screensize.height()-300)
+    else:
+      self.ui.graphicsView.setMinimumSize(screensize.width()-self.ui.detailsView.width()-4,(screensize.width()-self.ui.detailsView.width()-4)*2//3)
     self.ui.actionOpen.triggered.connect(self.actionOpen)
     self.ui.actionSync.triggered.connect(self.actionSync)
     self.ui.tableWidget.itemEntered.connect(self.actionTooltip)
