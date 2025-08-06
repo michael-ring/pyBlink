@@ -1,0 +1,12 @@
+{
+  "S3Bucket": "uploadsla",
+  "userName": "ring",
+  "baseDir": "/Volumes/Astro/slt/",
+  "lastUsedLocalDir": "/Volumes/Astro/slt/slt/Sh2 112",
+  "lastUsedS3Dir": "uploadsla:uploads/slt/Sh2 112",
+  "shortNames" : {
+    "Lacerta FN1506c" : "speedy",
+    "Lacerta 250" : "slt",
+    "Askar ACL200" : "vst"
+  }
+}

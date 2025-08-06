@@ -16,17 +16,17 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QIcon, QImage, QKeySequence, QLinearGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
-from PySide6.QtWidgets import (QApplication, QColumnView, QGraphicsView, QHBoxLayout,
-    QHeaderView, QMainWindow, QMenuBar, QRadioButton,
-    QSizePolicy, QStatusBar, QTableWidget, QTableWidgetItem,
-    QToolBar, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QAbstractItemView, QAbstractScrollArea, QApplication, QGraphicsView,
+    QHBoxLayout, QHeaderView, QMainWindow, QMenuBar,
+    QRadioButton, QSizePolicy, QStatusBar, QTableWidget,
+    QTableWidgetItem, QToolBar, QVBoxLayout, QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1800, 1169)
-        sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
+        MainWindow.resize(1074, 946)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
@@ -58,93 +58,112 @@ class Ui_MainWindow(object):
         self.actionS3Open.setMenuRole(QAction.MenuRole.NoRole)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
-        self.layoutWidget = QWidget(self.centralwidget)
-        self.layoutWidget.setObjectName(u"layoutWidget")
-        self.layoutWidget.setGeometry(QRect(1, 2, 1817, 1014))
-        self.verticalLayout_2 = QVBoxLayout(self.layoutWidget)
-        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.horizontalLayout = QHBoxLayout()
-        self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.graphicsView = QGraphicsView(self.layoutWidget)
-        self.graphicsView.setObjectName(u"graphicsView")
         sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        sizePolicy1.setHorizontalStretch(1)
-        sizePolicy1.setVerticalStretch(1)
-        sizePolicy1.setHeightForWidth(self.graphicsView.sizePolicy().hasHeightForWidth())
-        self.graphicsView.setSizePolicy(sizePolicy1)
-        self.graphicsView.setMinimumSize(QSize(1200, 800))
-        self.graphicsView.setMaximumSize(QSize(1200, 800))
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.centralwidget.sizePolicy().hasHeightForWidth())
+        self.centralwidget.setSizePolicy(sizePolicy1)
+        self.centralwidget.setAutoFillBackground(False)
+        self.horizontalLayout = QHBoxLayout(self.centralwidget)
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_2 = QVBoxLayout()
+        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.horizontalImagesLayout = QHBoxLayout()
+        self.horizontalImagesLayout.setObjectName(u"horizontalImagesLayout")
+        self.graphicsView = QGraphicsView(self.centralwidget)
+        self.graphicsView.setObjectName(u"graphicsView")
         self.graphicsView.setMouseTracking(True)
 
-        self.horizontalLayout.addWidget(self.graphicsView)
+        self.horizontalImagesLayout.addWidget(self.graphicsView)
 
         self.verticalLayout = QVBoxLayout()
         self.verticalLayout.setObjectName(u"verticalLayout")
-        self.detailsView = QGraphicsView(self.layoutWidget)
+        self.detailsView = QGraphicsView(self.centralwidget)
         self.detailsView.setObjectName(u"detailsView")
-        sizePolicy1.setHeightForWidth(self.detailsView.sizePolicy().hasHeightForWidth())
-        self.detailsView.setSizePolicy(sizePolicy1)
         self.detailsView.setMinimumSize(QSize(600, 600))
         self.detailsView.setMaximumSize(QSize(600, 600))
 
         self.verticalLayout.addWidget(self.detailsView, 0, Qt.AlignmentFlag.AlignTop)
 
-        self.tableWidget = QTableWidget(self.layoutWidget)
+
+        self.horizontalImagesLayout.addLayout(self.verticalLayout)
+
+
+        self.verticalLayout_2.addLayout(self.horizontalImagesLayout)
+
+        self.tableWidget = QTableWidget(self.centralwidget)
+        if (self.tableWidget.columnCount() < 8):
+            self.tableWidget.setColumnCount(8)
+        __qtablewidgetitem = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(0, __qtablewidgetitem)
+        __qtablewidgetitem1 = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(1, __qtablewidgetitem1)
+        __qtablewidgetitem2 = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(2, __qtablewidgetitem2)
+        __qtablewidgetitem3 = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(3, __qtablewidgetitem3)
+        __qtablewidgetitem4 = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(4, __qtablewidgetitem4)
+        __qtablewidgetitem5 = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(5, __qtablewidgetitem5)
+        __qtablewidgetitem6 = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(6, __qtablewidgetitem6)
+        __qtablewidgetitem7 = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(7, __qtablewidgetitem7)
         self.tableWidget.setObjectName(u"tableWidget")
+        self.tableWidget.setSizeAdjustPolicy(QAbstractScrollArea.SizeAdjustPolicy.AdjustToContents)
+        self.tableWidget.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+        self.tableWidget.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
+        self.tableWidget.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self.tableWidget.setRowCount(0)
+        self.tableWidget.setColumnCount(8)
+        self.tableWidget.verticalHeader().setVisible(False)
 
-        self.verticalLayout.addWidget(self.tableWidget, 0, Qt.AlignmentFlag.AlignBottom)
+        self.verticalLayout_2.addWidget(self.tableWidget)
 
-
-        self.horizontalLayout.addLayout(self.verticalLayout)
-
-
-        self.verticalLayout_2.addLayout(self.horizontalLayout)
-
-        self.columnView = QColumnView(self.layoutWidget)
-        self.columnView.setObjectName(u"columnView")
-
-        self.verticalLayout_2.addWidget(self.columnView)
-
-        self.horizontalLayout_3 = QHBoxLayout()
-        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
-        self.radioButton_all = QRadioButton(self.layoutWidget)
+        self.horizontalRadioButtonsLayout = QHBoxLayout()
+        self.horizontalRadioButtonsLayout.setObjectName(u"horizontalRadioButtonsLayout")
+        self.radioButton_all = QRadioButton(self.centralwidget)
         self.radioButton_all.setObjectName(u"radioButton_all")
 
-        self.horizontalLayout_3.addWidget(self.radioButton_all)
+        self.horizontalRadioButtonsLayout.addWidget(self.radioButton_all)
 
-        self.radioButton_unratedbyme_2 = QRadioButton(self.layoutWidget)
-        self.radioButton_unratedbyme_2.setObjectName(u"radioButton_unratedbyme_2")
+        self.radioButton_notdiscarded = QRadioButton(self.centralwidget)
+        self.radioButton_notdiscarded.setObjectName(u"radioButton_notdiscarded")
 
-        self.horizontalLayout_3.addWidget(self.radioButton_unratedbyme_2)
+        self.horizontalRadioButtonsLayout.addWidget(self.radioButton_notdiscarded)
 
-        self.radioButton_unratedothers = QRadioButton(self.layoutWidget)
-        self.radioButton_unratedothers.setObjectName(u"radioButton_unratedothers")
+        self.radioButton_discarded = QRadioButton(self.centralwidget)
+        self.radioButton_discarded.setObjectName(u"radioButton_discarded")
 
-        self.horizontalLayout_3.addWidget(self.radioButton_unratedothers)
+        self.horizontalRadioButtonsLayout.addWidget(self.radioButton_discarded)
 
-        self.radioButton_startrails = QRadioButton(self.layoutWidget)
+        self.radioButton_discardedbyothers = QRadioButton(self.centralwidget)
+        self.radioButton_discardedbyothers.setObjectName(u"radioButton_discardedbyothers")
+
+        self.horizontalRadioButtonsLayout.addWidget(self.radioButton_discardedbyothers)
+
+        self.radioButton_startrails = QRadioButton(self.centralwidget)
         self.radioButton_startrails.setObjectName(u"radioButton_startrails")
 
-        self.horizontalLayout_3.addWidget(self.radioButton_startrails)
+        self.horizontalRadioButtonsLayout.addWidget(self.radioButton_startrails)
 
-        self.radioButton_nostartrails = QRadioButton(self.layoutWidget)
+        self.radioButton_nostartrails = QRadioButton(self.centralwidget)
         self.radioButton_nostartrails.setObjectName(u"radioButton_nostartrails")
 
-        self.horizontalLayout_3.addWidget(self.radioButton_nostartrails)
+        self.horizontalRadioButtonsLayout.addWidget(self.radioButton_nostartrails)
 
 
-        self.verticalLayout_2.addLayout(self.horizontalLayout_3)
+        self.verticalLayout_2.addLayout(self.horizontalRadioButtonsLayout)
 
-        self.horizontalLayout_2 = QHBoxLayout()
-        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
 
-        self.verticalLayout_2.addLayout(self.horizontalLayout_2)
+        self.horizontalLayout.addLayout(self.verticalLayout_2)
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1800, 43))
+        self.menubar.setGeometry(QRect(0, 0, 1074, 43))
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(MainWindow)
         self.statusbar.setObjectName(u"statusbar")
@@ -173,11 +192,28 @@ class Ui_MainWindow(object):
 #if QT_CONFIG(tooltip)
         self.actionS3Open.setToolTip(QCoreApplication.translate("MainWindow", u"Open from S3 Share", None))
 #endif // QT_CONFIG(tooltip)
-        self.radioButton_all.setText(QCoreApplication.translate("MainWindow", u"Show All", None))
-        self.radioButton_unratedbyme_2.setText(QCoreApplication.translate("MainWindow", u"Not rated by me", None))
-        self.radioButton_unratedothers.setText(QCoreApplication.translate("MainWindow", u"Not rated by others", None))
-        self.radioButton_startrails.setText(QCoreApplication.translate("MainWindow", u"Startrails visible", None))
-        self.radioButton_nostartrails.setText(QCoreApplication.translate("MainWindow", u"No Startrails visible", None))
+        ___qtablewidgetitem = self.tableWidget.horizontalHeaderItem(0)
+        ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"Date", None));
+        ___qtablewidgetitem1 = self.tableWidget.horizontalHeaderItem(1)
+        ___qtablewidgetitem1.setText(QCoreApplication.translate("MainWindow", u"Target", None));
+        ___qtablewidgetitem2 = self.tableWidget.horizontalHeaderItem(2)
+        ___qtablewidgetitem2.setText(QCoreApplication.translate("MainWindow", u"Filter", None));
+        ___qtablewidgetitem3 = self.tableWidget.horizontalHeaderItem(3)
+        ___qtablewidgetitem3.setText(QCoreApplication.translate("MainWindow", u"RotatorAngle", None));
+        ___qtablewidgetitem4 = self.tableWidget.horizontalHeaderItem(4)
+        ___qtablewidgetitem4.setText(QCoreApplication.translate("MainWindow", u"PierSide", None));
+        ___qtablewidgetitem5 = self.tableWidget.horizontalHeaderItem(5)
+        ___qtablewidgetitem5.setText(QCoreApplication.translate("MainWindow", u"Status", None));
+        ___qtablewidgetitem6 = self.tableWidget.horizontalHeaderItem(6)
+        ___qtablewidgetitem6.setText(QCoreApplication.translate("MainWindow", u"Status Others", None));
+        ___qtablewidgetitem7 = self.tableWidget.horizontalHeaderItem(7)
+        ___qtablewidgetitem7.setText(QCoreApplication.translate("MainWindow", u"Startrails", None));
+        self.radioButton_all.setText(QCoreApplication.translate("MainWindow", u"Show All Subs", None))
+        self.radioButton_notdiscarded.setText(QCoreApplication.translate("MainWindow", u"Show not Discarded and New Subs", None))
+        self.radioButton_discarded.setText(QCoreApplication.translate("MainWindow", u"Show Discarded Subs", None))
+        self.radioButton_discardedbyothers.setText(QCoreApplication.translate("MainWindow", u"Show Discarded by Others Subs", None))
+        self.radioButton_startrails.setText(QCoreApplication.translate("MainWindow", u"Subs with Startrails", None))
+        self.radioButton_nostartrails.setText(QCoreApplication.translate("MainWindow", u"Subs without Startrails", None))
         self.toolBar.setWindowTitle(QCoreApplication.translate("MainWindow", u"toolBar", None))
     # retranslateUi
 

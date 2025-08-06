@@ -5,3 +5,4 @@ auto-stretch
 rclone-python
 pillow
 opencv-python
+psutil
