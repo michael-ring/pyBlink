@@ -93,7 +93,7 @@
          <number>0</number>
         </property>
         <property name="columnCount">
-         <number>8</number>
+         <number>12</number>
         </property>
         <attribute name="verticalHeaderVisible">
          <bool>false</bool>
@@ -101,6 +101,11 @@
         <column>
          <property name="text">
           <string>Date</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Duration</string>
          </property>
         </column>
         <column>
@@ -121,6 +126,21 @@
         <column>
          <property name="text">
           <string>PierSide</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Mean</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>FWHM</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>Stars</string>
          </property>
         </column>
         <column>
@@ -217,6 +237,7 @@
    <addaction name="actionOpen"/>
    <addaction name="actionS3Open"/>
    <addaction name="actionSync"/>
+   <addaction name="actionDelete"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">
@@ -252,6 +273,9 @@
    </property>
   </action>
   <action name="actionDelete">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset theme="QIcon::ThemeIcon::EditDelete"/>
    </property>

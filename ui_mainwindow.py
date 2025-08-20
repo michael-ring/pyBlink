@@ -48,6 +48,7 @@ class Ui_MainWindow(object):
         self.actionZoom_Out.setMenuRole(QAction.MenuRole.NoRole)
         self.actionDelete = QAction(MainWindow)
         self.actionDelete.setObjectName(u"actionDelete")
+        self.actionDelete.setEnabled(True)
         icon3 = QIcon(QIcon.fromTheme(QIcon.ThemeIcon.EditDelete))
         self.actionDelete.setIcon(icon3)
         self.actionDelete.setMenuRole(QAction.MenuRole.NoRole)
@@ -93,8 +94,8 @@ class Ui_MainWindow(object):
         self.verticalLayout_2.addLayout(self.horizontalImagesLayout)
 
         self.tableWidget = QTableWidget(self.centralwidget)
-        if (self.tableWidget.columnCount() < 8):
-            self.tableWidget.setColumnCount(8)
+        if (self.tableWidget.columnCount() < 12):
+            self.tableWidget.setColumnCount(12)
         __qtablewidgetitem = QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(0, __qtablewidgetitem)
         __qtablewidgetitem1 = QTableWidgetItem()
@@ -111,13 +112,21 @@ class Ui_MainWindow(object):
         self.tableWidget.setHorizontalHeaderItem(6, __qtablewidgetitem6)
         __qtablewidgetitem7 = QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(7, __qtablewidgetitem7)
+        __qtablewidgetitem8 = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(8, __qtablewidgetitem8)
+        __qtablewidgetitem9 = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(9, __qtablewidgetitem9)
+        __qtablewidgetitem10 = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(10, __qtablewidgetitem10)
+        __qtablewidgetitem11 = QTableWidgetItem()
+        self.tableWidget.setHorizontalHeaderItem(11, __qtablewidgetitem11)
         self.tableWidget.setObjectName(u"tableWidget")
         self.tableWidget.setSizeAdjustPolicy(QAbstractScrollArea.SizeAdjustPolicy.AdjustToContents)
         self.tableWidget.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
         self.tableWidget.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.tableWidget.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
         self.tableWidget.setRowCount(0)
-        self.tableWidget.setColumnCount(8)
+        self.tableWidget.setColumnCount(12)
         self.tableWidget.verticalHeader().setVisible(False)
 
         self.verticalLayout_2.addWidget(self.tableWidget)
@@ -176,6 +185,7 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionOpen)
         self.toolBar.addAction(self.actionS3Open)
         self.toolBar.addAction(self.actionSync)
+        self.toolBar.addAction(self.actionDelete)
 
         self.retranslateUi(MainWindow)
 
@@ -195,19 +205,27 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem = self.tableWidget.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"Date", None));
         ___qtablewidgetitem1 = self.tableWidget.horizontalHeaderItem(1)
-        ___qtablewidgetitem1.setText(QCoreApplication.translate("MainWindow", u"Target", None));
+        ___qtablewidgetitem1.setText(QCoreApplication.translate("MainWindow", u"Duration", None));
         ___qtablewidgetitem2 = self.tableWidget.horizontalHeaderItem(2)
-        ___qtablewidgetitem2.setText(QCoreApplication.translate("MainWindow", u"Filter", None));
+        ___qtablewidgetitem2.setText(QCoreApplication.translate("MainWindow", u"Target", None));
         ___qtablewidgetitem3 = self.tableWidget.horizontalHeaderItem(3)
-        ___qtablewidgetitem3.setText(QCoreApplication.translate("MainWindow", u"RotatorAngle", None));
+        ___qtablewidgetitem3.setText(QCoreApplication.translate("MainWindow", u"Filter", None));
         ___qtablewidgetitem4 = self.tableWidget.horizontalHeaderItem(4)
-        ___qtablewidgetitem4.setText(QCoreApplication.translate("MainWindow", u"PierSide", None));
+        ___qtablewidgetitem4.setText(QCoreApplication.translate("MainWindow", u"RotatorAngle", None));
         ___qtablewidgetitem5 = self.tableWidget.horizontalHeaderItem(5)
-        ___qtablewidgetitem5.setText(QCoreApplication.translate("MainWindow", u"Status", None));
+        ___qtablewidgetitem5.setText(QCoreApplication.translate("MainWindow", u"PierSide", None));
         ___qtablewidgetitem6 = self.tableWidget.horizontalHeaderItem(6)
-        ___qtablewidgetitem6.setText(QCoreApplication.translate("MainWindow", u"Status Others", None));
+        ___qtablewidgetitem6.setText(QCoreApplication.translate("MainWindow", u"Mean", None));
         ___qtablewidgetitem7 = self.tableWidget.horizontalHeaderItem(7)
-        ___qtablewidgetitem7.setText(QCoreApplication.translate("MainWindow", u"Startrails", None));
+        ___qtablewidgetitem7.setText(QCoreApplication.translate("MainWindow", u"FWHM", None));
+        ___qtablewidgetitem8 = self.tableWidget.horizontalHeaderItem(8)
+        ___qtablewidgetitem8.setText(QCoreApplication.translate("MainWindow", u"Stars", None));
+        ___qtablewidgetitem9 = self.tableWidget.horizontalHeaderItem(9)
+        ___qtablewidgetitem9.setText(QCoreApplication.translate("MainWindow", u"Status", None));
+        ___qtablewidgetitem10 = self.tableWidget.horizontalHeaderItem(10)
+        ___qtablewidgetitem10.setText(QCoreApplication.translate("MainWindow", u"Status Others", None));
+        ___qtablewidgetitem11 = self.tableWidget.horizontalHeaderItem(11)
+        ___qtablewidgetitem11.setText(QCoreApplication.translate("MainWindow", u"Startrails", None));
         self.radioButton_all.setText(QCoreApplication.translate("MainWindow", u"Show All Subs", None))
         self.radioButton_notdiscarded.setText(QCoreApplication.translate("MainWindow", u"Show not Discarded and New Subs", None))
         self.radioButton_discarded.setText(QCoreApplication.translate("MainWindow", u"Show Discarded Subs", None))

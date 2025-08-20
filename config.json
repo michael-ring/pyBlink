@@ -2,6 +2,7 @@
   "S3Bucket": "uploadsla",
   "userName": "ring",
   "baseDir": "/Volumes/Astro/slt/",
+  "cacheDir": "",
   "lastUsedLocalDir": "/Volumes/Astro/slt/slt/Sh2 112",
   "lastUsedS3Dir": "uploadsla:uploads/slt/Sh2 112",
   "shortNames" : {
