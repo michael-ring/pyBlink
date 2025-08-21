@@ -5,10 +5,12 @@ import rclone_python.utils
 from PySide6 import QtGui
 from PySide6.QtCore import QEvent, Qt
 from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QListWidgetItem, QGraphicsScene, QTableWidgetItem, \
-  QAbstractItemView, QHeaderView, QRadioButton
+  QAbstractItemView, QHeaderView, QRadioButton, QDialog, QDialogButtonBox
 from PIL import Image
 from PySide6.QtGui import QPixmap, QImage, QPainter, QKeyEvent, QColor
 from ui_mainwindow import Ui_MainWindow
+from ui_syncdialog import Ui_SyncDialog
+from ui_localsyncdialog import Ui_localSyncDialog
 from pathlib import Path
 from astropy.io import fits
 from platformdirs import user_cache_dir
@@ -21,6 +23,100 @@ import psutil
 
 def get_username():
   return psutil.Process().username()
+
+class syncDialog(Ui_SyncDialog,QDialog):
+  def cleanupDialog(self):
+    self.progressBar_overall.setValue(0)
+    self.progressBar_file1.setValue(0)
+    self.progressBar_file2.setValue(0)
+    self.progressBar_file3.setValue(0)
+    self.progressBar_file4.setValue(0)
+    self.label_file1.setText("")
+    self.label_file2.setText("")
+    self.label_file3.setText("")
+    self.label_file4.setText("")
+
+  def __init__(self, parent=None):
+    super().__init__(parent)
+    self.setupUi(self)
+    self.cleanupDialog()
+
+  def listener(self, mydict):
+    self.progressBar_overall.setValue(mydict['progress']*100)
+    if 'tasks' in mydict:
+      if len(mydict['tasks']) > 0:
+        self.progressBar_file1.setValue(mydict['tasks'][0]['progress']*100)
+        self.label_file1.setText(Path(mydict['tasks'][0]['name']).name)
+    if len(mydict['tasks']) > 1:
+      self.progressBar_file2.setValue(mydict['tasks'][1]['progress'] * 100)
+      self.label_file2.setText(Path(mydict['tasks'][1]['name']).name)
+    if len(mydict['tasks']) > 2:
+        self.progressBar_file3.setValue(mydict['tasks'][2]['progress']*100)
+        self.label_file3.setText(Path(mydict['tasks'][2]['name']).name)
+    if len(mydict['tasks']) > 3:
+      self.progressBar_file4.setValue(mydict['tasks'][3]['progress'] * 100)
+      self.label_file4.setText(Path(mydict['tasks'][3]['name']).name)
+    QtGui.QGuiApplication.processEvents()
+
+  def open(self, /):
+    super().open()
+    #QtGui.QGuiApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
+    try:
+      rclone.copy('upload:upload/_cache', window.cacheDirectory, listener=self.listener,show_progress=True,ignore_existing=True,args=["--transfers 4"])
+      self.progressBar_overall.setValue(100)
+      #self.statusBar().showMessage("Successfully synced cache from S3 server",5000)
+    except rclone_python.utils.RcloneException as e:
+      print(e.error_msg)
+      #self.statusBar().showMessage(e.error_msg,5000)
+    #QtGui.QGuiApplication.restoreOverrideCursor()
+    self.cleanupDialog()
+    self.progressBar_overall.setValue(100)
+    self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Ok)
+
+class localSyncDialog(Ui_localSyncDialog,QDialog):
+  def cleanupDialog(self):
+    self.progressBar_overall.setValue(0)
+    self.progressBar_file1.setValue(0)
+    self.progressBar_file2.setValue(0)
+    self.progressBar_file3.setValue(0)
+    self.progressBar_file4.setValue(0)
+    self.label_file1.setText("")
+    self.label_file2.setText("")
+    self.label_file3.setText("")
+    self.label_file4.setText("")
+
+  def __init__(self, parent=None):
+    super().__init__(parent)
+    self.setupUi(self)
+    self.cleanupDialog()
+
+  def listener(self, mydict):
+    self.progressBar_overall.setValue(mydict['progress']*100)
+    if 'tasks' in mydict:
+      if len(mydict['tasks']) > 0:
+        self.progressBar_file1.setValue(mydict['tasks'][0]['progress']*100)
+        self.label_file1.setText(Path(mydict['tasks'][0]['name']).name)
+    if len(mydict['tasks']) > 1:
+      self.progressBar_file2.setValue(mydict['tasks'][1]['progress'] * 100)
+      self.label_file2.setText(Path(mydict['tasks'][1]['name']).name)
+    if len(mydict['tasks']) > 2:
+        self.progressBar_file3.setValue(mydict['tasks'][2]['progress']*100)
+        self.label_file3.setText(Path(mydict['tasks'][2]['name']).name)
+    if len(mydict['tasks']) > 3:
+      self.progressBar_file4.setValue(mydict['tasks'][3]['progress'] * 100)
+      self.label_file4.setText(Path(mydict['tasks'][3]['name']).name)
+    QtGui.QGuiApplication.processEvents()
+
+  def open(self, /):
+    super().open()
+    try:
+      self.progressBar_overall.setValue(100)
+    except rclone_python.utils.RcloneException as e:
+      print(e.error_msg)
+    self.cleanupDialog()
+    self.progressBar_overall.setValue(100)
+    self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Ok)
+
 
 # Subclass QMainWindow to customize your application's main window
 class MainWindow(QMainWindow):
@@ -168,10 +264,6 @@ class MainWindow(QMainWindow):
     # pass the event on to the parent class
     return QMainWindow.eventFilter(self, watched, event)
 
-  def listener(self, mydict):
-    self.statusBar().showMessage(f"Progress: {"{:.2f}".format(mydict['progress'])}")
-    QtGui.QGuiApplication.processEvents()
-
   def radioButtonCheck(self):
     self.populateTableWidget()
 
@@ -186,14 +278,8 @@ class MainWindow(QMainWindow):
     self.populateTableWidget()
 
   def actionSync(self):
-    QtGui.QGuiApplication.setOverrideCursor(Qt.CursorShape.WaitCursor)
-    try:
-      rclone.copy('upload:upload/_cache', self.cacheDirectory, listener=self.listener,show_progress=True,ignore_existing=True,args=["--transfers 4"])
-      self.statusBar().showMessage("Successfully synced cache from S3 server",5000)
-    except rclone_python.utils.RcloneException as e:
-      print(e.error_msg)
-      self.statusBar().showMessage(e.error_msg,5000)
-    QtGui.QGuiApplication.restoreOverrideCursor()
+    sd = syncDialog(self)
+    sd.open()
 
   def actionOpen(self):
     userName=get_username()
@@ -201,6 +287,10 @@ class MainWindow(QMainWindow):
     if self.workingDirectory != '.':
       self.config["lastUsedLocalDir"] = self.workingDirectory
       print(f"Working Directory: {self.workingDirectory}")
+
+      lsd = localSyncDialog(self)
+      lsd.open()
+
       self.images.clear()
       cachePathFound=False
       cachePath=None
