@@ -1,5 +1,7 @@
 import concurrent.futures
 from pathlib import Path
+
+from PIL.JpegPresets import presets
 from astropy.io import fits
 import json
 import cv2
@@ -9,7 +11,6 @@ from PIL import Image
 
 def convertFits(file):
   image={}
-  print(f"Creating cache file from: {file}")
   header = fits.getheader(file)
   image['filter'] = header['FILTER']
   if "BAYERPAT" in header:
@@ -55,6 +56,7 @@ def convertFits(file):
 
     im = Image.fromarray(stretched * 255)
     im = im.convert('RGB')
+    im = im.resize((im.width//2,im.height//2))
     if image['pierside'] == 'East':
       im = im.rotate(180)
     exif = im.getexif()
@@ -70,7 +72,8 @@ def convertFits(file):
     persistedTags['fwhm'] = image['fwhm']
     persistedTags['exposure'] = image['exposure']
     exif[0x9286] = json.dumps(persistedTags)
-    im.save(image['cachePath'], exif=exif)
+    im.save(image['cachePath'], exif=exif,quality="web_low")
+  return f"Processed cache file for: {file}"
 
 try:
   config = json.load(open(Path(__file__).parent / 'config.json'))
@@ -82,7 +85,7 @@ except:
   config["lastUsedS3Dir"] = config["S3BucketName"] + ":/"
   config["shortNames"] = {}
 
-workingDirectory = Path('/Volumes/Astro/slt/speedy/Sh2 91')
+workingDirectory = Path('/Volumes/Astro/slt/speedy/')
 cacheDirectory = Path(user_cache_dir('pyBlink'))
 
 imageMetaData = {}
@@ -91,14 +94,11 @@ for file in workingDirectory.rglob("ImageMetaData*.json"):
   for imd in imds:
     imageMetaData[Path(imd['FilePath']).name] = imd
 
-# We can use a with statement to ensure threads are cleaned up promptly
 with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
-    # Start the load operations and mark each future with its URL
-    future_to_file = { executor.submit(convertFits,file): file for file in workingDirectory.rglob("*.fits") }
-    for future in concurrent.futures.as_completed(future_to_file):
-        x = future_to_file[future]
-        try:
-            data = future.result()
-        except Exception as exc:
-            print(f'generated an exception: {exc}')
+  future_convertFits = { executor.submit(convertFits,file): file for file in workingDirectory.rglob("*.fits") }
+  for future in concurrent.futures.as_completed(future_convertFits):
+    try:
+      print(future.result())
+    except Exception as exc:
+      print(f'generated an exception: {exc}')
 
