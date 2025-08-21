@@ -268,7 +268,7 @@ class MainWindow(QMainWindow):
     self.populateTableWidget()
 
   def actionDelete(self):
-    for index,image in self.images.items():
+    for index,image in self.images.copy().items():
       if image['status'] == '✘':
         if Path(image['fullPath']).exists() and Path(image['fullPath']).is_file():
           Path(image['fullPath']).unlink()
@@ -431,7 +431,7 @@ class MainWindow(QMainWindow):
       if len(self.images) > 0:
         statusfile = self.images[next(iter(self.images))]['cachePath'].parent / f'status-{userName}.json'
         if statusfile.exists():
-          print("Loading status from {statusfile}")
+          print(f"Loading status from {statusfile}")
           statusImages = json.load(open(statusfile))
           for index in statusImages:
             if index in self.images:
