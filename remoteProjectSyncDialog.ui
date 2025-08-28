@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>localSyncDialog</class>
- <widget class="QDialog" name="localSyncDialog">
+ <class>remoteProjectSyncDialog</class>
+ <widget class="QDialog" name="remoteProjectSyncDialog">
   <property name="windowModality">
    <enum>Qt::WindowModality::ApplicationModal</enum>
   </property>
@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>300</height>
+    <height>500</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -22,17 +22,17 @@
   <property name="minimumSize">
    <size>
     <width>800</width>
-    <height>300</height>
+    <height>500</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>800</width>
-    <height>300</height>
+    <height>500</height>
    </size>
   </property>
   <property name="windowTitle">
-   <string>Sync Cache with local directories</string>
+   <string>load a remote project</string>
   </property>
   <property name="modal">
    <bool>false</bool>
@@ -41,7 +41,7 @@
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>240</y>
+     <y>450</y>
      <width>730</width>
      <height>32</height>
     </rect>
@@ -69,19 +69,6 @@
     <number>24</number>
    </property>
   </widget>
-  <widget class="QProgressBar" name="progressBar_file1">
-   <property name="geometry">
-    <rect>
-     <x>520</x>
-     <y>75</y>
-     <width>240</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="value">
-    <number>24</number>
-   </property>
-  </widget>
   <widget class="QLabel" name="label_overall">
    <property name="geometry">
     <rect>
@@ -92,105 +79,14 @@
     </rect>
    </property>
    <property name="text">
-    <string>Loading Content from local Cache...</string>
-   </property>
-  </widget>
-  <widget class="QProgressBar" name="progressBar_file2">
-   <property name="geometry">
-    <rect>
-     <x>520</x>
-     <y>100</y>
-     <width>240</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="value">
-    <number>24</number>
-   </property>
-  </widget>
-  <widget class="QProgressBar" name="progressBar_file3">
-   <property name="geometry">
-    <rect>
-     <x>520</x>
-     <y>125</y>
-     <width>240</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="value">
-    <number>24</number>
-   </property>
-  </widget>
-  <widget class="QProgressBar" name="progressBar_file4">
-   <property name="geometry">
-    <rect>
-     <x>520</x>
-     <y>150</y>
-     <width>240</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="value">
-    <number>24</number>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_file1">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>78</y>
-     <width>500</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>TextLabel</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_file2">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>103</y>
-     <width>500</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>TextLabel</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_file3">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>128</y>
-     <width>500</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>TextLabel</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label_file4">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>153</y>
-     <width>500</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>TextLabel</string>
+    <string>Loading list of remote projects...</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_done">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>203</y>
+     <y>423</y>
      <width>500</width>
      <height>16</height>
     </rect>
@@ -199,13 +95,41 @@
     <string>Successfully loaded all Content</string>
    </property>
   </widget>
+  <widget class="QTreeWidget" name="treeWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>50</y>
+     <width>751</width>
+     <height>371</height>
+    </rect>
+   </property>
+   <property name="editTriggers">
+    <set>QAbstractItemView::EditTrigger::DoubleClicked</set>
+   </property>
+   <column>
+    <property name="text">
+     <string>Telescope</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Target</string>
+    </property>
+   </column>
+   <column>
+    <property name="text">
+     <string>Last Change</string>
+    </property>
+   </column>
+  </widget>
  </widget>
  <resources/>
  <connections>
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>localSyncDialog</receiver>
+   <receiver>remoteProjectSyncDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -221,7 +145,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>localSyncDialog</receiver>
+   <receiver>remoteProjectSyncDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

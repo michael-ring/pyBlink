@@ -73,6 +73,9 @@ class Ui_localSyncDialog(object):
         self.label_file4 = QLabel(localSyncDialog)
         self.label_file4.setObjectName(u"label_file4")
         self.label_file4.setGeometry(QRect(10, 153, 500, 16))
+        self.label_done = QLabel(localSyncDialog)
+        self.label_done.setObjectName(u"label_done")
+        self.label_done.setGeometry(QRect(10, 203, 500, 16))
 
         self.retranslateUi(localSyncDialog)
         self.buttonBox.accepted.connect(localSyncDialog.accept)
@@ -83,10 +86,11 @@ class Ui_localSyncDialog(object):
 
     def retranslateUi(self, localSyncDialog):
         localSyncDialog.setWindowTitle(QCoreApplication.translate("localSyncDialog", u"Sync Cache with local directories", None))
-        self.label_overall.setText(QCoreApplication.translate("localSyncDialog", u"Overall local Cache Sync Progress", None))
+        self.label_overall.setText(QCoreApplication.translate("localSyncDialog", u"Loading Content from local Cache...", None))
         self.label_file1.setText(QCoreApplication.translate("localSyncDialog", u"TextLabel", None))
         self.label_file2.setText(QCoreApplication.translate("localSyncDialog", u"TextLabel", None))
         self.label_file3.setText(QCoreApplication.translate("localSyncDialog", u"TextLabel", None))
         self.label_file4.setText(QCoreApplication.translate("localSyncDialog", u"TextLabel", None))
+        self.label_done.setText(QCoreApplication.translate("localSyncDialog", u"Successfully loaded all Content", None))
     # retranslateUi
 

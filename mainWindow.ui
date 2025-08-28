@@ -235,7 +235,7 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionOpen"/>
-   <addaction name="actionS3Open"/>
+   <addaction name="actionRemoteOpen"/>
    <addaction name="actionSync"/>
    <addaction name="actionDelete"/>
   </widget>
@@ -261,17 +261,6 @@
     <enum>QAction::MenuRole::NoRole</enum>
    </property>
   </action>
-  <action name="actionZoom_Out">
-   <property name="icon">
-    <iconset theme="QIcon::ThemeIcon::ZoomOut"/>
-   </property>
-   <property name="text">
-    <string>Zoom Out</string>
-   </property>
-   <property name="menuRole">
-    <enum>QAction::MenuRole::NoRole</enum>
-   </property>
-  </action>
   <action name="actionDelete">
    <property name="enabled">
     <bool>true</bool>
@@ -286,15 +275,15 @@
     <enum>QAction::MenuRole::NoRole</enum>
    </property>
   </action>
-  <action name="actionS3Open">
+  <action name="actionRemoteOpen">
    <property name="icon">
     <iconset theme="QIcon::ThemeIcon::NetworkWired"/>
    </property>
    <property name="text">
-    <string>Open from S3 Share</string>
+    <string>Open from remote Share</string>
    </property>
    <property name="toolTip">
-    <string>Open from S3 Share</string>
+    <string>Open from remote Share</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>

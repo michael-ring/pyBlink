@@ -34,7 +34,7 @@ class Ui_SyncDialog(object):
         SyncDialog.setModal(False)
         self.buttonBox = QDialogButtonBox(SyncDialog)
         self.buttonBox.setObjectName(u"buttonBox")
-        self.buttonBox.setGeometry(QRect(30, 240, 730, 32))
+        self.buttonBox.setGeometry(QRect(30, 250, 730, 32))
         self.buttonBox.setOrientation(Qt.Orientation.Horizontal)
         self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Cancel)
         self.buttonBox.setCenterButtons(False)
@@ -73,6 +73,18 @@ class Ui_SyncDialog(object):
         self.label_file4 = QLabel(SyncDialog)
         self.label_file4.setObjectName(u"label_file4")
         self.label_file4.setGeometry(QRect(10, 153, 500, 16))
+        self.label_done = QLabel(SyncDialog)
+        self.label_done.setObjectName(u"label_done")
+        self.label_done.setGeometry(QRect(10, 253, 500, 16))
+        self.label_syncToServer = QLabel(SyncDialog)
+        self.label_syncToServer.setObjectName(u"label_syncToServer")
+        self.label_syncToServer.setGeometry(QRect(10, 178, 500, 16))
+        self.label_syncFromServer = QLabel(SyncDialog)
+        self.label_syncFromServer.setObjectName(u"label_syncFromServer")
+        self.label_syncFromServer.setGeometry(QRect(10, 228, 500, 16))
+        self.label_syncStatus = QLabel(SyncDialog)
+        self.label_syncStatus.setObjectName(u"label_syncStatus")
+        self.label_syncStatus.setGeometry(QRect(10, 203, 500, 16))
 
         self.retranslateUi(SyncDialog)
         self.buttonBox.accepted.connect(SyncDialog.accept)
@@ -82,11 +94,15 @@ class Ui_SyncDialog(object):
     # setupUi
 
     def retranslateUi(self, SyncDialog):
-        SyncDialog.setWindowTitle(QCoreApplication.translate("SyncDialog", u"Sync Cache with Server", None))
-        self.label_overall.setText(QCoreApplication.translate("SyncDialog", u"Overall Progress", None))
+        SyncDialog.setWindowTitle(QCoreApplication.translate("SyncDialog", u"Syncing Cache with Remote Server", None))
+        self.label_overall.setText(QCoreApplication.translate("SyncDialog", u"Syncing local Cache with remote Cache", None))
         self.label_file1.setText(QCoreApplication.translate("SyncDialog", u"TextLabel", None))
         self.label_file2.setText(QCoreApplication.translate("SyncDialog", u"TextLabel", None))
         self.label_file3.setText(QCoreApplication.translate("SyncDialog", u"TextLabel", None))
         self.label_file4.setText(QCoreApplication.translate("SyncDialog", u"TextLabel", None))
+        self.label_done.setText(QCoreApplication.translate("SyncDialog", u"Successfully updated Caches", None))
+        self.label_syncToServer.setText(QCoreApplication.translate("SyncDialog", u"Sync local Cache to remote Cache", None))
+        self.label_syncFromServer.setText(QCoreApplication.translate("SyncDialog", u"Sync remote Cache to local Cache", None))
+        self.label_syncStatus.setText(QCoreApplication.translate("SyncDialog", u"Sync local Status to remote Cache", None))
     # retranslateUi
 
