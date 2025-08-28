@@ -1,5 +1,5 @@
 {
-  "S3CachePath": "upload:upload/_cache/",
+  "S3CachePath": "cache:cache/",
   "lastUsedLocalDir": "/Volumes/Astro/slt/slt/IC 63",
   "shortNames": {
     "Lacerta FN1506c": "speedy",
