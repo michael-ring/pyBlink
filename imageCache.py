@@ -199,6 +199,7 @@ class imageCache(QtCore.QObject):
       return None
 
   def populateFromCachedImages(self, extraPath):
+    self.images.clear()
     files = list((self.cacheDirectory / extraPath).rglob("*.jpg"))
     for file in files:
       image=self.extractExifTags(file)
