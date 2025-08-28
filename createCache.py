@@ -85,16 +85,21 @@ except:
   config["lastUsedS3Dir"] = config["S3BucketName"] + ":/"
   config["shortNames"] = {}
 
-workingDirectory = Path('/Volumes/Astro/slt/speedy/')
-cacheDirectory = Path(user_cache_dir('pyBlink'))
+workingDirectory = Path.home() / "Pictures"
+cacheDirectory = Path.home() / "Pictures" / "_cache"
 
 imageMetaData = {}
 for file in workingDirectory.rglob("ImageMetaData*.json"):
-  imds = json.load(open(file))
+  imds={}
+  try:
+    imds = json.load(open(file))
+  except:
+    print(file)
+    pass
   for imd in imds:
     imageMetaData[Path(imd['FilePath']).name] = imd
 
-with concurrent.futures.ThreadPoolExecutor(max_workers=8) as executor:
+with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
   future_convertFits = { executor.submit(convertFits,file): file for file in workingDirectory.rglob("*.fits") }
   for future in concurrent.futures.as_completed(future_convertFits):
     try:
