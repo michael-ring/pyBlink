@@ -62,7 +62,7 @@ class MainWindow(QMainWindow):
       self.config = json.load(open(Path(__file__).parent / 'config.json'))
     except:
       self.config = {}
-      self.config["S3CachePath"] = "upload:upload/_cache/"
+      self.config["S3CachePath"] = "cache:cache/"
       self.config["lastUsedLocalDir"] = str(os.getcwd())
       self.config["shortNames"] = {
         "Lacerta FN1506c": "speedy",
