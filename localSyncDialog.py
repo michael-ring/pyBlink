@@ -102,12 +102,12 @@ class localSyncDialog(Ui_localSyncDialog, QDialog):
           statusImages = json.load(open(statusfile))
           for index in statusImages:
             if index in self.imageCache.images:
-              if self.imageCache.images[index]['otherstatus'] == "":
-                self.imageCache.images[index]['otherstatus'] = statusImages[index]['status']
+              if self.imageCache.images[index]['statusothers'] == "":
+                self.imageCache.images[index]['statusothers'] = statusImages[index]['status']
               elif statusImages[index]['status'] == '✘':
-                self.imageCache.images[index]['otherstatus'] = '✘'
-              elif statusImages[index]['status'] == '✔' and self.imageCache.images[index]['otherstatus'] != '✘':
-                self.imageCache.images[index]['otherstatus'] = statusImages[index]['status']
+                self.imageCache.images[index]['statusothers'] = '✘'
+              elif statusImages[index]['status'] == '✔' and self.imageCache.images[index]['statusothers'] != '✘':
+                self.imageCache.images[index]['statusothers'] = statusImages[index]['status']
 
               if statusImages[index]['status'] == '✔':
                 self.imageCache.images[index]['startrails'] = '✔'
