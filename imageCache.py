@@ -24,6 +24,7 @@ class imageCache(QtCore.QObject):
     self.images = {}
     self.telescopeShortNames = {}
     self.fileProgressSlot = 0
+    self.imageMetaData = {}
 
   def setTelescopeShortNames(self, telescopeShortNames):
     self.telescopeShortNames = telescopeShortNames
@@ -33,11 +34,11 @@ class imageCache(QtCore.QObject):
 
   def populateCacheFromFitsDirectory(self, directory):
     self.images.clear()
-    imageMetaData = {}
+    self.imageMetaData = {}
     for file in Path(directory).rglob("ImageMetaData*.json"):
       imds = json.load(open(file))
       for imd in imds:
-        imageMetaData[Path(imd['FilePath']).name] = imd
+        self.imageMetaData[Path(imd['FilePath']).name] = imd
     cachePathFound = False
     cachePath = None
     doneCount = 0
@@ -97,6 +98,17 @@ class imageCache(QtCore.QObject):
 
       self.fileProgressUpdate.emit(str(filename.name), self.fileProgressSlot, 80)
 
+      if filename.name in self.imageMetaData:
+        image['adumean']=self.imageMetaData[filename.name]['ADUMean']
+        image['detectedstars']=self.imageMetaData[filename.name]['DetectedStars']
+        image['fwhm']=self.imageMetaData[filename.name]['FWHM']
+        image['hfr']=self.imageMetaData[filename.name]['HFR']
+        image['eccentricity']=self.imageMetaData[filename.name]['Eccentricity']
+        if image['fwhm'] == 'NaN':
+          image['fwhm']=0
+        if image['hfr'] == 'NaN':
+          image['hfr']=0
+
       if image['pierside'] == 'East':
         im = im.rotate(180)
 
@@ -111,6 +123,8 @@ class imageCache(QtCore.QObject):
       persistedTags['adumean'] = image['adumean']
       persistedTags['detectedstars'] = image['detectedstars']
       persistedTags['fwhm'] = image['fwhm']
+      persistedTags['hfr'] = image['hfr']
+      persistedTags['eccentricity'] = image['eccentricity']
       persistedTags['exposure'] = image['exposure']
       exif[0x9286] = json.dumps(persistedTags)
       im.save(image['cachepath'], exif=exif, quality="web_low")
@@ -132,6 +146,9 @@ class imageCache(QtCore.QObject):
       image['adumean'] = 0
       image['detectedstars'] = 0
       image['fwhm'] = 0
+      image['hfr'] = 0
+      image['eccentricity'] = 0
+
       image['filter'] = header['FILTER']
       if "BAYERPAT" in header:
         image['bayerpat'] = header['BAYERPAT']
@@ -172,6 +189,8 @@ class imageCache(QtCore.QObject):
       image['adumean'] = 0
       image['fwhm'] = 0
       image['detectedstars'] = 0
+      image['hfr'] = 0
+      image['eccentricity'] = 0
 
       image['date'] = savedTags['date']
       image['object'] = savedTags['object']
@@ -193,6 +212,10 @@ class imageCache(QtCore.QObject):
         image['fwhm'] = savedTags['fwhm']
       if 'detectedstars' in savedTags:
         image['detectedstars'] = savedTags['detectedstars']
+      if 'hfr' in savedTags:
+        image['hfr'] = savedTags['hfr']
+      if 'eccentricity' in savedTags:
+        image['eccentricity'] = savedTags['eccentricity']
       return image
     except KeyError:
       print(f"Fits data in Exif Header missing/incomplete, rebuild...")

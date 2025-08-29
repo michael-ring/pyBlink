@@ -25,7 +25,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1074, 946)
+        MainWindow.resize(1193, 946)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -133,10 +133,15 @@ class Ui_MainWindow(object):
 
         self.horizontalRadioButtonsLayout.addWidget(self.radioButton_all)
 
-        self.radioButton_notdiscarded = QRadioButton(self.centralwidget)
-        self.radioButton_notdiscarded.setObjectName(u"radioButton_notdiscarded")
+        self.radioButton_notdiscardedandnew = QRadioButton(self.centralwidget)
+        self.radioButton_notdiscardedandnew.setObjectName(u"radioButton_notdiscardedandnew")
 
-        self.horizontalRadioButtonsLayout.addWidget(self.radioButton_notdiscarded)
+        self.horizontalRadioButtonsLayout.addWidget(self.radioButton_notdiscardedandnew)
+
+        self.radioButton_new = QRadioButton(self.centralwidget)
+        self.radioButton_new.setObjectName(u"radioButton_new")
+
+        self.horizontalRadioButtonsLayout.addWidget(self.radioButton_new)
 
         self.radioButton_discarded = QRadioButton(self.centralwidget)
         self.radioButton_discarded.setObjectName(u"radioButton_discarded")
@@ -167,7 +172,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1074, 43))
+        self.menubar.setGeometry(QRect(0, 0, 1193, 43))
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(MainWindow)
         self.statusbar.setObjectName(u"statusbar")
@@ -177,9 +182,9 @@ class Ui_MainWindow(object):
         self.toolBar.setMovable(False)
         MainWindow.addToolBar(Qt.ToolBarArea.TopToolBarArea, self.toolBar)
 
+        self.toolBar.addAction(self.actionSync)
         self.toolBar.addAction(self.actionOpen)
         self.toolBar.addAction(self.actionRemoteOpen)
-        self.toolBar.addAction(self.actionSync)
         self.toolBar.addAction(self.actionDelete)
 
         self.retranslateUi(MainWindow)
@@ -190,11 +195,11 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"pyBlink", None))
         self.actionOpen.setText(QCoreApplication.translate("MainWindow", u"Open from local filesystem", None))
-        self.actionSync.setText(QCoreApplication.translate("MainWindow", u"Sync with S3 Share", None))
-        self.actionDelete.setText(QCoreApplication.translate("MainWindow", u"Delete", None))
-        self.actionRemoteOpen.setText(QCoreApplication.translate("MainWindow", u"Open from remote Share", None))
+        self.actionSync.setText(QCoreApplication.translate("MainWindow", u"Sync with remote Cache", None))
+        self.actionDelete.setText(QCoreApplication.translate("MainWindow", u"Delete discarded Subs", None))
+        self.actionRemoteOpen.setText(QCoreApplication.translate("MainWindow", u"Open from remote Cache", None))
 #if QT_CONFIG(tooltip)
-        self.actionRemoteOpen.setToolTip(QCoreApplication.translate("MainWindow", u"Open from remote Share", None))
+        self.actionRemoteOpen.setToolTip(QCoreApplication.translate("MainWindow", u"Open from remote Cache", None))
 #endif // QT_CONFIG(tooltip)
         ___qtablewidgetitem = self.tableWidget.horizontalHeaderItem(0)
         ___qtablewidgetitem.setText(QCoreApplication.translate("MainWindow", u"Date", None));
@@ -221,7 +226,8 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem11 = self.tableWidget.horizontalHeaderItem(11)
         ___qtablewidgetitem11.setText(QCoreApplication.translate("MainWindow", u"Startrails", None));
         self.radioButton_all.setText(QCoreApplication.translate("MainWindow", u"Show All Subs", None))
-        self.radioButton_notdiscarded.setText(QCoreApplication.translate("MainWindow", u"Show not Discarded and New Subs", None))
+        self.radioButton_notdiscardedandnew.setText(QCoreApplication.translate("MainWindow", u"Show not Discarded and New Subs", None))
+        self.radioButton_new.setText(QCoreApplication.translate("MainWindow", u"Show New Subs", None))
         self.radioButton_discarded.setText(QCoreApplication.translate("MainWindow", u"Show Discarded Subs", None))
         self.radioButton_discardedbyothers.setText(QCoreApplication.translate("MainWindow", u"Show Discarded by Others Subs", None))
         self.radioButton_startrails.setText(QCoreApplication.translate("MainWindow", u"Subs with Startrails", None))

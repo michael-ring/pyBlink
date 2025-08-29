@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1074</width>
+    <width>1193</width>
     <height>946</height>
    </rect>
   </property>
@@ -170,9 +170,16 @@
          </widget>
         </item>
         <item>
-         <widget class="QRadioButton" name="radioButton_notdiscarded">
+         <widget class="QRadioButton" name="radioButton_notdiscardedandnew">
           <property name="text">
            <string>Show not Discarded and New Subs</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QRadioButton" name="radioButton_new">
+          <property name="text">
+           <string>Show New Subs</string>
           </property>
          </widget>
         </item>
@@ -215,7 +222,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1074</width>
+     <width>1193</width>
      <height>43</height>
     </rect>
    </property>
@@ -234,9 +241,9 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionSync"/>
    <addaction name="actionOpen"/>
    <addaction name="actionRemoteOpen"/>
-   <addaction name="actionSync"/>
    <addaction name="actionDelete"/>
   </widget>
   <action name="actionOpen">
@@ -255,7 +262,7 @@
     <iconset theme="QIcon::ThemeIcon::SyncSynchronizing"/>
    </property>
    <property name="text">
-    <string>Sync with S3 Share</string>
+    <string>Sync with remote Cache</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>
@@ -269,7 +276,7 @@
     <iconset theme="QIcon::ThemeIcon::EditDelete"/>
    </property>
    <property name="text">
-    <string>Delete</string>
+    <string>Delete discarded Subs</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>
@@ -280,10 +287,10 @@
     <iconset theme="QIcon::ThemeIcon::NetworkWired"/>
    </property>
    <property name="text">
-    <string>Open from remote Share</string>
+    <string>Open from remote Cache</string>
    </property>
    <property name="toolTip">
-    <string>Open from remote Share</string>
+    <string>Open from remote Cache</string>
    </property>
    <property name="menuRole">
     <enum>QAction::MenuRole::NoRole</enum>

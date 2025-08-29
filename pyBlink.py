@@ -36,7 +36,6 @@ class MainWindow(QMainWindow):
     self.ui.actionSync.triggered.connect(self.actionSync)
     self.ui.actionRemoteOpen.triggered.connect(self.actionRemoteOpen)
     self.ui.actionDelete.triggered.connect(self.actionDelete)
-    self.ui.tableWidget.itemEntered.connect(self.actionTooltip)
     self.ui.tableWidget.currentItemChanged.connect(self.actionCurrentItemChanged)
     self.ui.tableWidget.installEventFilter(self)
     self.ui.tableWidget.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
@@ -44,11 +43,11 @@ class MainWindow(QMainWindow):
 
     self.ui.radioButton_all.setChecked(True)
     self.ui.radioButton_discarded.toggled.connect(self.radioButtonCheck)
-    self.ui.radioButton_notdiscarded.toggled.connect(self.radioButtonCheck)
-    self.ui.radioButton_startrails.toggled.connect(self.radioButtonCheck)
-    self.ui.radioButton_notdiscarded.toggled.connect(self.radioButtonCheck)
-    self.ui.radioButton_nostartrails.toggled.connect(self.radioButtonCheck)
+    self.ui.radioButton_new.toggled.connect(self.radioButtonCheck)
+    self.ui.radioButton_notdiscardedandnew.toggled.connect(self.radioButtonCheck)
     self.ui.radioButton_discardedbyothers.toggled.connect(self.radioButtonCheck)
+    self.ui.radioButton_startrails.toggled.connect(self.radioButtonCheck)
+    self.ui.radioButton_nostartrails.toggled.connect(self.radioButtonCheck)
 
     self.scene = QGraphicsScene()
     self.ui.graphicsView.setScene(self.scene)
@@ -67,7 +66,8 @@ class MainWindow(QMainWindow):
       self.config["shortNames"] = {
         "Lacerta FN1506c": "speedy",
         "Lacerta 250": "slt",
-        "Askar ACL200": "vst"
+        "Askar ACL200": "vst",
+        "Askar ACL200 F4": "vst"
       }
 
     self.imageCache = imageCache(self.windowTitle())
@@ -112,11 +112,14 @@ class MainWindow(QMainWindow):
       showItem = False
       if self.ui.radioButton_all.isChecked():
         showItem = True
-      if self.ui.radioButton_notdiscarded.isChecked():
+      if self.ui.radioButton_new.isChecked():
         if image['status'] != '✘' and image['status'] != '✔':
           showItem = True
       if self.ui.radioButton_discarded.isChecked():
         if image['status'] == '✘':
+          showItem = True
+      if self.ui.radioButton_notdiscardedandnew.isChecked():
+        if image['status'] != '✘':
           showItem = True
       if self.ui.radioButton_discardedbyothers.isChecked():
         if image['statusothers'] == '✘':
@@ -282,16 +285,6 @@ class MainWindow(QMainWindow):
     self.ui.detailsView.setScene(scene)
     self.ui.detailsView.setRenderHint(QPainter.RenderHint.Antialiasing)
     self.ui.detailsView.show()
-
-  def actionTooltip(self, item: QListWidgetItem):
-    text = item.text()
-    text_width = self.fontMetrics().boundingRect(text).width()
-    width = self.width()
-    # if text_width > width:
-    item.setToolTip(text)
-    # else:
-    #    item.setToolTip('')
-
 
 app = QApplication(sys.argv)
 window = MainWindow()
