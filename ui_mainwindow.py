@@ -25,7 +25,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1193, 946)
+        MainWindow.resize(1206, 946)
         sizePolicy = QSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Maximum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -88,6 +88,8 @@ class Ui_MainWindow(object):
 
         self.verticalLayout_2.addLayout(self.horizontalImagesLayout)
 
+        self.horizontaTableslLayout = QHBoxLayout()
+        self.horizontaTableslLayout.setObjectName(u"horizontaTableslLayout")
         self.tableWidget = QTableWidget(self.centralwidget)
         if (self.tableWidget.columnCount() < 12):
             self.tableWidget.setColumnCount(12)
@@ -124,7 +126,22 @@ class Ui_MainWindow(object):
         self.tableWidget.setColumnCount(12)
         self.tableWidget.verticalHeader().setVisible(False)
 
-        self.verticalLayout_2.addWidget(self.tableWidget)
+        self.horizontaTableslLayout.addWidget(self.tableWidget)
+
+        self.overviewTableWidget = QTableWidget(self.centralwidget)
+        if (self.overviewTableWidget.columnCount() < 2):
+            self.overviewTableWidget.setColumnCount(2)
+        __qtablewidgetitem12 = QTableWidgetItem()
+        self.overviewTableWidget.setHorizontalHeaderItem(0, __qtablewidgetitem12)
+        __qtablewidgetitem13 = QTableWidgetItem()
+        self.overviewTableWidget.setHorizontalHeaderItem(1, __qtablewidgetitem13)
+        self.overviewTableWidget.setObjectName(u"overviewTableWidget")
+        self.overviewTableWidget.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
+
+        self.horizontaTableslLayout.addWidget(self.overviewTableWidget)
+
+
+        self.verticalLayout_2.addLayout(self.horizontaTableslLayout)
 
         self.horizontalRadioButtonsLayout = QHBoxLayout()
         self.horizontalRadioButtonsLayout.setObjectName(u"horizontalRadioButtonsLayout")
@@ -172,7 +189,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1193, 43))
+        self.menubar.setGeometry(QRect(0, 0, 1206, 43))
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(MainWindow)
         self.statusbar.setObjectName(u"statusbar")
@@ -225,6 +242,10 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem10.setText(QCoreApplication.translate("MainWindow", u"Status Others", None));
         ___qtablewidgetitem11 = self.tableWidget.horizontalHeaderItem(11)
         ___qtablewidgetitem11.setText(QCoreApplication.translate("MainWindow", u"Startrails", None));
+        ___qtablewidgetitem12 = self.overviewTableWidget.horizontalHeaderItem(0)
+        ___qtablewidgetitem12.setText(QCoreApplication.translate("MainWindow", u"Key", None));
+        ___qtablewidgetitem13 = self.overviewTableWidget.horizontalHeaderItem(1)
+        ___qtablewidgetitem13.setText(QCoreApplication.translate("MainWindow", u"Walue", None));
         self.radioButton_all.setText(QCoreApplication.translate("MainWindow", u"Show All Subs", None))
         self.radioButton_notdiscardedandnew.setText(QCoreApplication.translate("MainWindow", u"Show not Discarded and New Subs", None))
         self.radioButton_new.setText(QCoreApplication.translate("MainWindow", u"Show New Subs", None))

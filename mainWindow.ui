@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1193</width>
+    <width>1206</width>
     <height>946</height>
    </rect>
   </property>
@@ -76,89 +76,110 @@
        </layout>
       </item>
       <item>
-       <widget class="QTableWidget" name="tableWidget">
-        <property name="sizeAdjustPolicy">
-         <enum>QAbstractScrollArea::SizeAdjustPolicy::AdjustToContents</enum>
-        </property>
-        <property name="editTriggers">
-         <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
-        </property>
-        <property name="selectionMode">
-         <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
-        </property>
-        <property name="selectionBehavior">
-         <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
-        </property>
-        <property name="rowCount">
-         <number>0</number>
-        </property>
-        <property name="columnCount">
-         <number>12</number>
-        </property>
-        <attribute name="verticalHeaderVisible">
-         <bool>false</bool>
-        </attribute>
-        <column>
-         <property name="text">
-          <string>Date</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Duration</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Target</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Filter</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>RotatorAngle</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>PierSide</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Mean</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>FWHM</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Stars</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Status</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Status Others</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>Startrails</string>
-         </property>
-        </column>
-       </widget>
+       <layout class="QHBoxLayout" name="horizontaTableslLayout">
+        <item>
+         <widget class="QTableWidget" name="tableWidget">
+          <property name="sizeAdjustPolicy">
+           <enum>QAbstractScrollArea::SizeAdjustPolicy::AdjustToContents</enum>
+          </property>
+          <property name="editTriggers">
+           <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
+          </property>
+          <property name="selectionMode">
+           <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
+          </property>
+          <property name="rowCount">
+           <number>0</number>
+          </property>
+          <property name="columnCount">
+           <number>12</number>
+          </property>
+          <attribute name="verticalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
+          <column>
+           <property name="text">
+            <string>Date</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Duration</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Target</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Filter</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>RotatorAngle</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>PierSide</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Mean</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>FWHM</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Stars</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Status</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Status Others</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Startrails</string>
+           </property>
+          </column>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTableWidget" name="overviewTableWidget">
+          <property name="editTriggers">
+           <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
+          </property>
+          <column>
+           <property name="text">
+            <string>Key</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>Walue</string>
+           </property>
+          </column>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
        <layout class="QHBoxLayout" name="horizontalRadioButtonsLayout">
@@ -222,7 +243,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1193</width>
+     <width>1206</width>
      <height>43</height>
     </rect>
    </property>
