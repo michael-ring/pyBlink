@@ -40,7 +40,8 @@ def convertFits(file):
     if 'FWHM' in imageMetaData[file.name]:
       image['fwhm'] = imageMetaData[file.name]['FWHM']
 
-  image['cachePath'] = (cacheDirectory / image['telescope'] / image['object'] / file.name).with_suffix('.jpg')
+  #image['cachePath'] = (cacheDirectory / image['telescope'] / image['object'] / file.name).with_suffix('.jpg')
+  image['cachePath'] = (cacheDirectory / image['object'] / file.name).with_suffix('.jpg')
   if not image['cachePath'].parent.exists():
     image['cachePath'].parent.mkdir(parents=True, exist_ok=True)
   if not image['cachePath'].exists():
