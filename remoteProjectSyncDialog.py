@@ -20,9 +20,13 @@ class remoteProjectSyncDialog(Ui_remoteProjectSyncDialog, QDialog):
     self.buttonBox.rejected.connect(self.onRejected)
     self.imageCache = None
     self.s3CachePath = None
+    self.s3ImagesPath = None
 
   def setS3CachePath(self, s3CachePath):
     self.s3CachePath = s3CachePath
+
+  def setS3ImagesPath(self, s3ImagesPath):
+    self.s3ImagesPath = s3ImagesPath
 
   def setImageCache(self, imageCache):
     self.imageCache = imageCache
@@ -48,6 +52,7 @@ class remoteProjectSyncDialog(Ui_remoteProjectSyncDialog, QDialog):
     try:
       self.progressBar_overall.setValue(25)
       files = rclone.ls(self.s3CachePath, max_depth=2, dirs_only=True)
+      imageDirectories = rclone.ls(self.s3ImagesPath, max_depth=3, dirs_only=True)
       self.progressBar_overall.setMaximum(len(files)+25)
       telescopeItems={}
       for fileInfo in files:
