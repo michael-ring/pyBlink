@@ -62,6 +62,7 @@ class MainWindow(QMainWindow):
     except:
       self.config = {}
       self.config["S3CachePath"] = "cache:cache/"
+      self.config["S3ImagesPath"] = "upload:upload/"
       self.config["lastUsedLocalDir"] = str(os.getcwd())
       self.config["shortNames"] = {
         "Lacerta FN1506c": "speedy",
@@ -220,6 +221,7 @@ class MainWindow(QMainWindow):
     self.imageCache.persistStatus()
     rpsd = remoteProjectSyncDialog(self)
     rpsd.setS3CachePath(self.config['S3CachePath'])
+    rpsd.setS3ImagesPath(self.config['S3ImagesPath'])
     rpsd.setImageCache(self.imageCache)
     rpsd.open()
 
