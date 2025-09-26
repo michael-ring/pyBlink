@@ -247,16 +247,34 @@ class imageCache(QtCore.QObject):
 
   def injectStatus(self):
     if len(self.images) > 0:
-      firstIndex = next(iter(self.images))
-      statusfile=self.images[firstIndex]['cachepath'].parent / f'status-{psutil.Process().username()}.json'
-      if statusfile.exists():
-        print(f"Loading status from {statusfile}")
-        statusImages = json.load(open(statusfile))
+      statusFileDirectory=Path(self.images[next(iter(self.images))]['cachepath'].parent)
+      for statusFile in Path(statusFileDirectory).glob("status-*.json"):
+        if statusFile.name == f"status-{psutil.Process().username()}.json":
+          print(f"Loading own status from {statusFile}")
+          statusImages = json.load(open(statusFile))
+          for index in statusImages:
+            if index in self.images:
+              self.images[index]['status'] = statusImages[index]['status']
+              if statusImages[index]['startrails'] == '✔':
+                self.images[index]['startrails'] = '✔'
+      for statusFile in Path(statusFileDirectory).glob("status-*.json"):
+        if statusFile.name != f"status-{psutil.Process().username()}.json":
+          print(f"Loading other status from {statusFile}")
+          statusImages = json.load(open(statusFile))
+          for index in statusImages:
+            if index in self.images:
+              if self.images[index]['statusothers'] == "":
+                self.images[index]['statusothers'] = statusImages[index]['status']
+              elif statusImages[index]['status'] == '✘':
+                self.images[index]['statusothers'] = '✘'
+              elif statusImages[index]['status'] == '✔' and self.images[index]['statusothers'] != '✘':
+                self.images[index]['statusothers'] = statusImages[index]['status']
 
-        for index in statusImages:
-           if index in self.images:
-            self.images[index]['status'] = statusImages[index]['status']
-            self.images[index]['statusothers'] = statusImages[index]['statusothers']
-            self.images[index]['startrails'] = statusImages[index]['startrails']
+              if statusImages[index]['startrails'] == '✔':
+                self.images[index]['startrails'] = '✔'
+
+
+
+
 
 

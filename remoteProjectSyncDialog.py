@@ -77,7 +77,7 @@ class remoteProjectSyncDialog(Ui_remoteProjectSyncDialog, QDialog):
           if key in latestImageDirectories:
             subItem.setText(2, latestImageDirectories[key])
           else:
-            subItem.setText(2, f'not on server anymore')
+            subItem.setText(2, f'not on server')
         self.progressBar_overall.setValue(self.progressBar_overall.value()+1)
         QtGui.QGuiApplication.processEvents()
     except utils.RcloneException as e:

@@ -1,5 +1,6 @@
 import concurrent.futures
 from pathlib import Path
+import os
 
 from PIL.JpegPresets import presets
 from astropy.io import fits
@@ -8,6 +9,7 @@ import cv2
 from platformdirs import user_cache_dir
 from auto_stretch import apply_stretch
 from PIL import Image
+import psutil
 
 def convertFits(file):
   image={}
@@ -38,7 +40,8 @@ def convertFits(file):
     if 'FWHM' in imageMetaData[file.name]:
       image['fwhm'] = imageMetaData[file.name]['FWHM']
 
-  image['cachePath'] = (cacheDirectory / image['telescope'] / image['object'] / file.name).with_suffix('.jpg')
+  #image['cachePath'] = (cacheDirectory / image['telescope'] / image['object'] / file.name).with_suffix('.jpg')
+  image['cachePath'] = (cacheDirectory / image['object'] / file.name).with_suffix('.jpg')
   if not image['cachePath'].parent.exists():
     image['cachePath'].parent.mkdir(parents=True, exist_ok=True)
   if not image['cachePath'].exists():
@@ -80,7 +83,7 @@ try:
 except:
   config = {}
   config["S3BucketName"] = "uploadsla"
-  config["username"] = get_username()
+  config["username"] = psutil.Process().username()
   config["lastUsedLocalDir"] = os.getcwd()
   config["lastUsedS3Dir"] = config["S3BucketName"] + ":/"
   config["shortNames"] = {}
@@ -99,11 +102,12 @@ for file in workingDirectory.rglob("ImageMetaData*.json"):
   for imd in imds:
     imageMetaData[Path(imd['FilePath']).name] = imd
 
-with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
-  future_convertFits = { executor.submit(convertFits,file): file for file in workingDirectory.rglob("*.fits") }
-  for future in concurrent.futures.as_completed(future_convertFits):
-    try:
-      print(future.result())
-    except Exception as exc:
-      print(f'generated an exception: {exc}')
+if len(imageMetaData) > 0:
+  with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+    future_convertFits = { executor.submit(convertFits,file): file for file in workingDirectory.rglob("*.fits") }
+    for future in concurrent.futures.as_completed(future_convertFits):
+      try:
+        print(future.result())
+      except Exception as exc:
+        print(f'generated an exception: {exc}')
 

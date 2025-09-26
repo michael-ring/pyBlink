@@ -44,15 +44,19 @@ class syncDialog(Ui_SyncDialog, QDialog):
       if len(mydict['tasks']) > 0:
         self.progressBar_file1.setValue(mydict['tasks'][0]['progress'] * 100)
         self.label_file1.setText(Path(mydict['tasks'][0]['name']).name)
+        #print(f"{Path(mydict['tasks'][0]['name']).name} {mydict['tasks'][0]['progress'] * 100}%")
     if len(mydict['tasks']) > 1:
       self.progressBar_file2.setValue(mydict['tasks'][1]['progress'] * 100)
       self.label_file2.setText(Path(mydict['tasks'][1]['name']).name)
+      #print(f"{Path(mydict['tasks'][1]['name']).name} {mydict['tasks'][1]['progress'] * 100}%")
     if len(mydict['tasks']) > 2:
       self.progressBar_file3.setValue(mydict['tasks'][2]['progress'] * 100)
       self.label_file3.setText(Path(mydict['tasks'][2]['name']).name)
+      #print(f"{Path(mydict['tasks'][2]['name']).name} {mydict['tasks'][2]['progress'] * 100}%")
     if len(mydict['tasks']) > 3:
       self.progressBar_file4.setValue(mydict['tasks'][3]['progress'] * 100)
       self.label_file4.setText(Path(mydict['tasks'][3]['name']).name)
+      #print(f"{Path(mydict['tasks'][3]['name']).name} {mydict['tasks'][3]['progress'] * 100}%")
     QtGui.QGuiApplication.processEvents()
     QtGui.QGuiApplication.processEvents()
 
@@ -71,12 +75,16 @@ class syncDialog(Ui_SyncDialog, QDialog):
         self.label_syncStatus.setVisible(True)
         QtGui.QGuiApplication.processEvents()
         rclone.copy(self.imageCache.getCacheDirectory() / self.specificSyncDirectory,f'{self.s3CachePath}{self.specificSyncDirectory}', listener=self.listener, show_progress=True,
-                    ignore_existing=True, args=[f'--transfers 4 --include "status-{psutil.Process().username()}.json"'])
+                    ignore_existing=False, args=[f'--transfers 4 --include "status-{psutil.Process().username()}.json"'])
         self.label_syncFromServer.setVisible(True)
         QtGui.QGuiApplication.processEvents()
         rclone.copy(f'{self.s3CachePath}{self.specificSyncDirectory}',
                     self.imageCache.getCacheDirectory() / self.specificSyncDirectory, listener=self.listener, show_progress=True,
-                    ignore_existing=True, args=["--transfers 4"])
+                    ignore_existing=True, args=["--transfers 4 --exclude '*.json'"])
+        rclone.copy(f'{self.s3CachePath}{self.specificSyncDirectory}',
+                    self.imageCache.getCacheDirectory() / self.specificSyncDirectory, listener=self.listener,
+                    show_progress=True,
+                    ignore_existing=False, args=["--transfers 4 --include '*.json'"])
       else:
         self.label_syncToServer.setVisible(True)
         QtGui.QGuiApplication.processEvents()
@@ -85,11 +93,13 @@ class syncDialog(Ui_SyncDialog, QDialog):
         self.label_syncStatus.setVisible(True)
         QtGui.QGuiApplication.processEvents()
         rclone.copy(self.imageCache.getCacheDirectory(),self.s3CachePath, listener=self.listener, show_progress=True,
-                    ignore_existing=True, args=[f'--transfers 4 --include "status-{psutil.Process().username()}.json"'])
+                    ignore_existing=False, args=[f'--transfers 4 --include "status-{psutil.Process().username()}.json"'])
         self.label_syncFromServer.setVisible(True)
         QtGui.QGuiApplication.processEvents()
         rclone.copy(self.s3CachePath, self.imageCache.getCacheDirectory(), listener=self.listener, show_progress=True,
-                    ignore_existing=True, args=["--transfers 4"])
+                    ignore_existing=True, args=["--transfers 4 --exclude '*.json'"])
+        rclone.copy(self.s3CachePath, self.imageCache.getCacheDirectory(), listener=self.listener, show_progress=True,
+                  ignore_existing=False, args=["--transfers 4 --include '*.json'"])
       self.progressBar_overall.setValue(100)
       syncSuccess = True
     except utils.RcloneException as e:
