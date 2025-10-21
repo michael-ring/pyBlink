@@ -189,7 +189,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1206, 43))
+        self.menubar.setGeometry(QRect(0, 0, 1206, 39))
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(MainWindow)
         self.statusbar.setObjectName(u"statusbar")
@@ -245,7 +245,7 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem12 = self.overviewTableWidget.horizontalHeaderItem(0)
         ___qtablewidgetitem12.setText(QCoreApplication.translate("MainWindow", u"Key", None));
         ___qtablewidgetitem13 = self.overviewTableWidget.horizontalHeaderItem(1)
-        ___qtablewidgetitem13.setText(QCoreApplication.translate("MainWindow", u"Walue", None));
+        ___qtablewidgetitem13.setText(QCoreApplication.translate("MainWindow", u"Value", None));
         self.radioButton_all.setText(QCoreApplication.translate("MainWindow", u"Show All Subs", None))
         self.radioButton_notdiscardedandnew.setText(QCoreApplication.translate("MainWindow", u"Show not Discarded and New Subs", None))
         self.radioButton_new.setText(QCoreApplication.translate("MainWindow", u"Show New Subs", None))

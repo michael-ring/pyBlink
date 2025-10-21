@@ -78,6 +78,26 @@ class MainWindow(QMainWindow):
   def onUpdateImageCache(self):
     self.populateTableWidget(loadData=True)
 
+  def populateOverviewTableWidget(self):
+    print(f"populating overviewTableWidget")
+    data={}
+    for index, image in self.imageCache.images.items():
+      key=f"{image['filter']} ({image['exposure']}s)"
+      if not key in data:
+        if image['status'] == '✘':
+          data[key] = 0
+        else:
+          data[key] = 1
+      else:
+        if image['status'] != '✘':
+          data[key] += 1
+    self.ui.overviewTableWidget.clearContents()
+    self.ui.overviewTableWidget.setRowCount(len(data))
+    for index, (key, value) in enumerate(data.items()):
+      self.ui.overviewTableWidget.setItem(index, 0, QTableWidgetItem(key))
+      self.ui.overviewTableWidget.setItem(index, 1, QTableWidgetItem(str(value)))
+
+
   def populateTableWidget(self, loadData=False):
     print(f"populating tableWidget")
     if len(self.imageCache.images) != self.ui.tableWidget.rowCount():
@@ -140,6 +160,7 @@ class MainWindow(QMainWindow):
       position += 1
 
     self.ui.tableWidget.setUpdatesEnabled(True)
+    self.populateOverviewTableWidget()
 
   def mousePressEvent(self, e):
     self.statusBar().showMessage(f"mousePressEvent {e.position()}")
@@ -168,6 +189,7 @@ class MainWindow(QMainWindow):
             self.imageCache.images[imagesIndex]['status'] = '✔'
             for column in range(self.ui.tableWidget.columnCount()):
               self.ui.tableWidget.item(currentRow, column).setBackground(QColor(255, 255, 255, 255))
+          populateOverviewTableWidget()
           return True
         if QKeyEvent(event).key() == Qt.Key.Key_T:
           if self.ui.tableWidget.item(currentRow, self.startrailColumn).text() != '✔':

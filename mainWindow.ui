@@ -174,7 +174,7 @@
           </column>
           <column>
            <property name="text">
-            <string>Walue</string>
+            <string>Value</string>
            </property>
           </column>
          </widget>
@@ -244,7 +244,7 @@
      <x>0</x>
      <y>0</y>
      <width>1206</width>
-     <height>43</height>
+     <height>39</height>
     </rect>
    </property>
   </widget>
