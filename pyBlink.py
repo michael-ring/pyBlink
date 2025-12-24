@@ -25,13 +25,13 @@ class MainWindow(QMainWindow):
 
     screensize = self.screen().size()
     self.resize(screensize.width(), screensize.height())
-    newHeightOfGraphicsView = (screensize.width() - self.ui.detailsView.width() - 4) * 2 // 3
+    newHeightOfGraphicsView = (screensize.width() - self.ui.detailsView.width() - 8) * 2 // 3
     if newHeightOfGraphicsView > screensize.height() - 300:
       self.ui.graphicsView.setMinimumSize((screensize.height() - 300) * 3 // 2, screensize.height() - 300)
       self.ui.graphicsView.setMaximumSize((screensize.height() - 300) * 3 // 2, screensize.height() - 300)
     else:
-      self.ui.graphicsView.setMinimumSize(screensize.width() - self.ui.detailsView.width() - 4,
-                                          (screensize.width() - self.ui.detailsView.width() - 4) * 2 // 3)
+      self.ui.graphicsView.setMinimumSize(screensize.width() - self.ui.detailsView.width() - 8,
+                                          (screensize.width() - self.ui.detailsView.width() - 8) * 2 // 3)
     self.ui.actionOpen.triggered.connect(self.actionOpen)
     self.ui.actionSync.triggered.connect(self.actionSync)
     self.ui.actionRemoteOpen.triggered.connect(self.actionRemoteOpen)
@@ -51,6 +51,12 @@ class MainWindow(QMainWindow):
 
     self.scene = QGraphicsScene()
     self.ui.graphicsView.setScene(self.scene)
+    # Disable scrollbars on the graphics view (they remain off even when scene is changed)
+    self.ui.graphicsView.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+    self.ui.graphicsView.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+    # Also disable scrollbars for the details view since we set scenes there as well
+    self.ui.detailsView.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+    self.ui.detailsView.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
     self.dateColumn = 0
     self.targetColumn = 2
     self.filterColumn = 3
@@ -66,6 +72,8 @@ class MainWindow(QMainWindow):
       self.config["lastUsedLocalDir"] = str(os.getcwd())
       self.config["shortNames"] = {
         "Lacerta FN1506c": "speedy",
+        "Lacerta FN510c": "slt",
+        "Lacerta FN25010c": "slt",
         "Lacerta 250": "slt",
         "Askar ACL200": "vst",
         "Askar ACL200 F4": "vst"
@@ -189,7 +197,7 @@ class MainWindow(QMainWindow):
             self.imageCache.images[imagesIndex]['status'] = '✔'
             for column in range(self.ui.tableWidget.columnCount()):
               self.ui.tableWidget.item(currentRow, column).setBackground(QColor(255, 255, 255, 255))
-          populateOverviewTableWidget()
+          self.populateOverviewTableWidget()
           return True
         if QKeyEvent(event).key() == Qt.Key.Key_T:
           if self.ui.tableWidget.item(currentRow, self.startrailColumn).text() != '✔':
@@ -272,8 +280,8 @@ class MainWindow(QMainWindow):
     scene = QGraphicsScene(0, 0, self.ui.detailsView.size().width(), self.ui.detailsView.size().width())
     segmentedImage = QImage(self.ui.detailsView.size().width(), self.ui.detailsView.size().width(),
                             QImage.Format.Format_RGB32)
-    sourceWidth = self.ui.detailsView.size().width()
-    sourceHeight = self.ui.detailsView.size().height()
+    sourceWidth = self.image.width()
+    sourceHeight = self.image.height()
     segmentWidth = self.ui.detailsView.size().width() // 3
     segmentHeight = self.ui.detailsView.size().height() // 3
     Painter = QPainter()

@@ -89,7 +89,9 @@ except:
   config["shortNames"] = {}
 
 workingDirectory = Path.home() / "Pictures"
+workingDirectory = Path.home() / "devel" / "pyBlink" / "2025-12-23"
 cacheDirectory = Path.home() / "Pictures" / "_cache"
+cacheDirectory = Path.home() / "devel" / "pyBlink" / "_cache"
 
 imageMetaData = {}
 for file in workingDirectory.rglob("ImageMetaData*.json"):
@@ -103,7 +105,7 @@ for file in workingDirectory.rglob("ImageMetaData*.json"):
     imageMetaData[Path(imd['FilePath']).name] = imd
 
 if len(imageMetaData) > 0:
-  with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+  with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
     future_convertFits = { executor.submit(convertFits,file): file for file in workingDirectory.rglob("*.fits") }
     for future in concurrent.futures.as_completed(future_convertFits):
       try:
