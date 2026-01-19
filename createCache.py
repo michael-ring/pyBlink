@@ -102,11 +102,10 @@ for file in workingDirectory.rglob("ImageMetaData*.json"):
     print(file)
     pass
   for imd in imds:
-    print(Path(imd['FilePath']).name)
     imageMetaData[Path(imd['FilePath']).name] = imd
 
 if len(imageMetaData) > 0:
-  with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+  with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
     future_convertFits = { executor.submit(convertFits,file): file for file in workingDirectory.rglob("*.fits") }
     for future in concurrent.futures.as_completed(future_convertFits):
       try:
