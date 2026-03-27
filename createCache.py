@@ -114,7 +114,7 @@ imageMetaData = {}
 for file in workingDirectory.rglob("ImageMetaData*.json"):
   imds={}
   try:
-    imds = json.load(open(file))
+    imds = json.load(open(file,encoding='utf-8'))
   except:
     print(file)
     pass
