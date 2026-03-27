@@ -2,11 +2,9 @@ import concurrent.futures
 from pathlib import Path
 import os
 
-from PIL.JpegPresets import presets
 from astropy.io import fits
 import json
 import cv2
-from platformdirs import user_cache_dir
 from auto_stretch import apply_stretch
 from PIL import Image
 import psutil
@@ -14,24 +12,34 @@ import psutil
 def convertFits(file):
   image={}
   header = fits.getheader(file)
-  image['filter'] = header['FILTER']
+  image['filter'] = header.get('FILTER', 'unknown')
   if "BAYERPAT" in header:
     image['bayerpat'] = header['BAYERPAT']
   image['object'] = header['OBJECT']
   image['telescope'] = header['TELESCOP']
-  image['exposure'] = header['EXPOSURE']
   if image['telescope'] in config["shortNames"]:
     image['telescope'] = config["shortNames"][image['telescope']]
+  image['exposure'] = header['EXPOSURE']
   image['date'] = header['DATE-LOC'].split('.')[0].replace('T', ' ')
-  image['pierside'] = header['PIERSIDE']
+  image['pierside'] = header.get('PIERSIDE', 'unknown')
   if 'ROTATOR' in header:
     image['rotator'] = str(int(header['ROTATOR']))
   else:
     image['rotator'] = 'not found'
-
+  image['objectrotation'] = header['OBJCTROT']
+  image['objectra'] = header['OBJCTRA']
+  image['objectdec'] = header['OBJCTDEC']
   image['adumean'] = 0
   image['detectedstars'] = 0
   image['fwhm'] = 0
+  image['hfr'] = 0
+  image['eccentricity'] = 0
+  image['guidingrmsarcsec'] = 0
+
+  if 'MOONANGL' in header:
+    image['moonangle'] = str(int(header['MOONANGL']))
+  else:
+    image['moonangle'] = 'not found'
   if file.name in imageMetaData:
     if 'ADUMean' in imageMetaData[file.name]:
       image['adumean'] = imageMetaData[file.name]['ADUMean']
@@ -39,8 +47,13 @@ def convertFits(file):
       image['detectedstars'] = imageMetaData[file.name]['DetectedStars']
     if 'FWHM' in imageMetaData[file.name]:
       image['fwhm'] = imageMetaData[file.name]['FWHM']
+    if 'HFR' in imageMetaData[file.name]:
+      image['hfr'] = imageMetaData[file.name]['HFR']
+    if 'Eccentricity' in imageMetaData[file.name]:
+      image['eccentricity'] = imageMetaData[file.name]['Eccentricity']
+    if 'GuidingRMSArcSec' in imageMetaData[file.name]:
+      image['guidingrmsarcsec'] = imageMetaData[file.name]['GuidingRMSArcSec']
 
-  #image['cachePath'] = (cacheDirectory / image['telescope'] / image['object'] / file.name).with_suffix('.jpg')
   image['cachePath'] = (cacheDirectory / image['object'] / file.name).with_suffix('.jpg')
   if not image['cachePath'].parent.exists():
     image['cachePath'].parent.mkdir(parents=True, exist_ok=True)
@@ -73,7 +86,13 @@ def convertFits(file):
     persistedTags['adumean'] = image['adumean']
     persistedTags['detectedstars'] = image['detectedstars']
     persistedTags['fwhm'] = image['fwhm']
+    persistedTags['hfr'] = image['hfr']
     persistedTags['exposure'] = image['exposure']
+    persistedTags['objectrotation'] = image['objectrotation']
+    persistedTags['objectra'] = image['objectra']
+    persistedTags['objectdec'] = image['objectdec']
+    persistedTags['eccentricity'] = image['eccentricity']
+    persistedTags['guidingrmsarcsec'] = image['guidingrmsarcsec']
     exif[0x9286] = json.dumps(persistedTags)
     im.save(image['cachePath'], exif=exif,quality="web_low")
   return f"Processed cache file for: {file}"
@@ -89,9 +108,7 @@ except:
   config["shortNames"] = {}
 
 workingDirectory = Path.home() / "Pictures"
-#workingDirectory = Path.home() / "devel" / "pyBlink" / "2025-12-23"
 cacheDirectory = Path.home() / "Pictures" / "_cache"
-#cacheDirectory = Path.home() / "devel" / "pyBlink" / "_cache"
 
 imageMetaData = {}
 for file in workingDirectory.rglob("ImageMetaData*.json"):
@@ -112,4 +129,3 @@ if len(imageMetaData) > 0:
         print(future.result())
       except Exception as exc:
         print(f'generated an exception: {exc}')
-

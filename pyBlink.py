@@ -213,6 +213,61 @@ class MainWindow(QMainWindow):
   def radioButtonCheck(self):
     self.populateTableWidget()
 
+  def updateOverviewTableWithRankings(self, image_key, table_row):
+    """Calculate rankings for the selected image and update overview table."""
+    if image_key not in self.imageCache.images:
+      return
+
+    current_image = self.imageCache.images[image_key]
+    current_filter = current_image['filter']
+    current_exposure = current_image['exposure']
+    current_fwhm = current_image['fwhm']
+    current_detected_stars = current_image['detectedstars']
+    current_mean = current_image['adumean']
+    # Collect all images with same filter and exposure
+    matching_images = []
+    stars_candidateCount = 0
+    fwhm_candidateCount = 0
+    mean_candidateCount = 0
+    stars_rank = 0
+    fwhm_rank = 0
+    mean_rank = 0
+    for img_idx, img_data in self.imageCache.images.items():
+      if img_data['filter'] == current_filter and img_data['exposure'] == current_exposure:
+        if img_data['status'] != '✘':  # Only consider images that are not discarded
+          if img_data['detectedstars'] > 0:
+              stars_candidateCount += 1
+              if img_data['detectedstars'] < current_detected_stars:
+                stars_rank += 1
+          if img_data['fwhm'] > 0:
+              fwhm_candidateCount += 1
+              if img_data['fwhm'] < current_fwhm:
+                fwhm_rank += 1
+          if img_data['adumean'] > 0:
+              mean_candidateCount += 1
+              if img_data['adumean'] < current_mean:
+                mean_rank += 1
+
+    # Update overview table with rankings
+    # Find the row in overview table corresponding to this filter
+    filter_text = current_filter
+    for row in range(self.ui.overviewTableWidget.rowCount()):
+      cell = self.ui.overviewTableWidget.item(row, 1)  # #Subs column (index 1, Filter is hidden at 0)
+      if cell is None:
+        continue
+      # Check if this row's filter matches
+      filter_cell = self.ui.overviewTableWidget.item(row, 0)
+      if filter_cell and filter_cell.text() == filter_text + f" ({current_exposure:.1f}s)":
+        # Update ranking columns (indices 2, 3, 4)
+        self.ui.overviewTableWidget.setItem(row, 2, QTableWidgetItem(f"{stars_rank}/{stars_candidateCount}"))
+        self.ui.overviewTableWidget.setItem(row, 3, QTableWidgetItem(f"{mean_candidateCount-mean_rank}/{mean_candidateCount}"))
+        self.ui.overviewTableWidget.setItem(row, 4, QTableWidgetItem(f"{fwhm_candidateCount-fwhm_rank}/{fwhm_candidateCount}"))
+      else:
+        self.ui.overviewTableWidget.setItem(row, 2, QTableWidgetItem(str("")))
+        self.ui.overviewTableWidget.setItem(row, 3, QTableWidgetItem(str("")))
+        self.ui.overviewTableWidget.setItem(row, 4, QTableWidgetItem(str("")))
+
+
   def actionDelete(self):
     # self.imageCache.persistStatus()
     for index, image in self.imageCache.images.copy().items():
@@ -267,6 +322,9 @@ class MainWindow(QMainWindow):
     idx = self.ui.tableWidget.item(item.row(), 2).text() + " " + self.ui.tableWidget.item(item.row(),
                                                                                           3).text() + " " + self.ui.tableWidget.item(
       item.row(), 0).text()
+    # Calculate and display rankings in overview table
+    self.updateOverviewTableWithRankings(idx, item.row())
+
     self.image = QImage(self.imageCache.images[idx]['cachepath'])
     scene = QGraphicsScene(0, 0, self.ui.graphicsView.size().width(), self.ui.graphicsView.size().height())
     pixmap = QPixmap(self.image)

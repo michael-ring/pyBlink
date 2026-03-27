@@ -65,31 +65,19 @@ class Ui_MainWindow(object):
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_2 = QVBoxLayout()
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.horizontalImagesLayout = QHBoxLayout()
-        self.horizontalImagesLayout.setObjectName(u"horizontalImagesLayout")
+        self.imagesAndTablesHBox = QHBoxLayout()
+        self.imagesAndTablesHBox.setObjectName(u"imagesAndTablesHBox")
+        self.imagesAndTablesHBox.setContentsMargins(0, 0, 0, 0)
+        self.leftVBox = QVBoxLayout()
+        self.leftVBox.setObjectName(u"leftVBox")
         self.graphicsView = QGraphicsView(self.centralwidget)
         self.graphicsView.setObjectName(u"graphicsView")
         self.graphicsView.setMouseTracking(True)
+        sizePolicy1.setHeightForWidth(self.graphicsView.sizePolicy().hasHeightForWidth())
+        self.graphicsView.setSizePolicy(sizePolicy1)
 
-        self.horizontalImagesLayout.addWidget(self.graphicsView)
+        self.leftVBox.addWidget(self.graphicsView)
 
-        self.verticalLayout = QVBoxLayout()
-        self.verticalLayout.setObjectName(u"verticalLayout")
-        self.detailsView = QGraphicsView(self.centralwidget)
-        self.detailsView.setObjectName(u"detailsView")
-        self.detailsView.setMinimumSize(QSize(600, 600))
-        self.detailsView.setMaximumSize(QSize(600, 600))
-
-        self.verticalLayout.addWidget(self.detailsView, 0, Qt.AlignmentFlag.AlignTop)
-
-
-        self.horizontalImagesLayout.addLayout(self.verticalLayout)
-
-
-        self.verticalLayout_2.addLayout(self.horizontalImagesLayout)
-
-        self.horizontaTableslLayout = QHBoxLayout()
-        self.horizontaTableslLayout.setObjectName(u"horizontaTableslLayout")
         self.tableWidget = QTableWidget(self.centralwidget)
         if (self.tableWidget.columnCount() < 12):
             self.tableWidget.setColumnCount(12)
@@ -126,22 +114,48 @@ class Ui_MainWindow(object):
         self.tableWidget.setColumnCount(12)
         self.tableWidget.verticalHeader().setVisible(False)
 
-        self.horizontaTableslLayout.addWidget(self.tableWidget)
+        self.leftVBox.addWidget(self.tableWidget)
+
+
+        self.imagesAndTablesHBox.addLayout(self.leftVBox)
+
+        self.rightVBox = QVBoxLayout()
+        self.rightVBox.setObjectName(u"rightVBox")
+        self.detailsView = QGraphicsView(self.centralwidget)
+        self.detailsView.setObjectName(u"detailsView")
+        self.detailsView.setMinimumSize(QSize(600, 600))
+        self.detailsView.setMaximumSize(QSize(600, 600))
+
+        self.rightVBox.addWidget(self.detailsView)
 
         self.overviewTableWidget = QTableWidget(self.centralwidget)
-        if (self.overviewTableWidget.columnCount() < 2):
-            self.overviewTableWidget.setColumnCount(2)
+        if (self.overviewTableWidget.columnCount() < 5):
+            self.overviewTableWidget.setColumnCount(5)
         __qtablewidgetitem12 = QTableWidgetItem()
         self.overviewTableWidget.setHorizontalHeaderItem(0, __qtablewidgetitem12)
         __qtablewidgetitem13 = QTableWidgetItem()
         self.overviewTableWidget.setHorizontalHeaderItem(1, __qtablewidgetitem13)
+        __qtablewidgetitem14 = QTableWidgetItem()
+        self.overviewTableWidget.setHorizontalHeaderItem(2, __qtablewidgetitem14)
+        __qtablewidgetitem15 = QTableWidgetItem()
+        self.overviewTableWidget.setHorizontalHeaderItem(3, __qtablewidgetitem15)
+        __qtablewidgetitem16 = QTableWidgetItem()
+        self.overviewTableWidget.setHorizontalHeaderItem(4, __qtablewidgetitem16)
         self.overviewTableWidget.setObjectName(u"overviewTableWidget")
+        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
+        sizePolicy2.setHorizontalStretch(0)
+        sizePolicy2.setVerticalStretch(0)
+        sizePolicy2.setHeightForWidth(self.overviewTableWidget.sizePolicy().hasHeightForWidth())
+        self.overviewTableWidget.setSizePolicy(sizePolicy2)
         self.overviewTableWidget.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
 
-        self.horizontaTableslLayout.addWidget(self.overviewTableWidget)
+        self.rightVBox.addWidget(self.overviewTableWidget)
 
 
-        self.verticalLayout_2.addLayout(self.horizontaTableslLayout)
+        self.imagesAndTablesHBox.addLayout(self.rightVBox)
+
+
+        self.verticalLayout_2.addLayout(self.imagesAndTablesHBox)
 
         self.horizontalRadioButtonsLayout = QHBoxLayout()
         self.horizontalRadioButtonsLayout.setObjectName(u"horizontalRadioButtonsLayout")
@@ -243,9 +257,15 @@ class Ui_MainWindow(object):
         ___qtablewidgetitem11 = self.tableWidget.horizontalHeaderItem(11)
         ___qtablewidgetitem11.setText(QCoreApplication.translate("MainWindow", u"Startrails", None));
         ___qtablewidgetitem12 = self.overviewTableWidget.horizontalHeaderItem(0)
-        ___qtablewidgetitem12.setText(QCoreApplication.translate("MainWindow", u"Key", None));
+        ___qtablewidgetitem12.setText(QCoreApplication.translate("MainWindow", u"Filter", None));
         ___qtablewidgetitem13 = self.overviewTableWidget.horizontalHeaderItem(1)
-        ___qtablewidgetitem13.setText(QCoreApplication.translate("MainWindow", u"Value", None));
+        ___qtablewidgetitem13.setText(QCoreApplication.translate("MainWindow", u"#Subs", None));
+        ___qtablewidgetitem14 = self.overviewTableWidget.horizontalHeaderItem(2)
+        ___qtablewidgetitem14.setText(QCoreApplication.translate("MainWindow", u"StarsRank", None));
+        ___qtablewidgetitem15 = self.overviewTableWidget.horizontalHeaderItem(3)
+        ___qtablewidgetitem15.setText(QCoreApplication.translate("MainWindow", u"MeanRank", None));
+        ___qtablewidgetitem16 = self.overviewTableWidget.horizontalHeaderItem(4)
+        ___qtablewidgetitem16.setText(QCoreApplication.translate("MainWindow", u"FWHMRank", None));
         self.radioButton_all.setText(QCoreApplication.translate("MainWindow", u"Show All Subs", None))
         self.radioButton_notdiscardedandnew.setText(QCoreApplication.translate("MainWindow", u"Show not Discarded and New Subs", None))
         self.radioButton_new.setText(QCoreApplication.translate("MainWindow", u"Show New Subs", None))

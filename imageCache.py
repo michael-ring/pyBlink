@@ -10,6 +10,7 @@ import json
 import psutil
 from astropy.io import fits
 from PySide6.QtCore import Signal
+from concurrent.futures import ThreadPoolExecutor
 
 
 class imageCache(QtCore.QObject):
@@ -43,6 +44,9 @@ class imageCache(QtCore.QObject):
     cachePath = None
     doneCount = 0
     files = list(directory.rglob("*.fits"))
+    files_to_process = []
+
+    # First pass: check existing cache files and collect files needing processing
     for file in files:
       if 'site-packages' in str(file.parent):
         continue
@@ -63,8 +67,18 @@ class imageCache(QtCore.QObject):
         else:
           (cachePath / file.name).with_suffix('.jpg').unlink()
       if not (cachePath / file.name).with_suffix('.jpg').exists():
-        self.addImageToCache(file)
+        files_to_process.append(file)
       doneCount += 1
+
+    # Second pass: process files in parallel using ThreadPoolExecutor
+    if files_to_process:
+      with ThreadPoolExecutor(max_workers=4) as executor:
+        futures = [executor.submit(self.addImageToCache, file) for file in files_to_process]
+        # Wait for all tasks to complete
+        for future in futures:
+          #self.progressUpdate.emit(doneCount)
+          future.result()
+
     self.images = dict(sorted(self.images.items()))
     self.injectStatus()
     self.cacheUpdated.emit()
@@ -210,12 +224,17 @@ class imageCache(QtCore.QObject):
         image['adumean'] = savedTags['adumean']
       if 'fwhm' in savedTags:
         image['fwhm'] = savedTags['fwhm']
+        if image['fwhm'] == 'NaN':
+          image['fwhm'] = 0
       if 'detectedstars' in savedTags:
         image['detectedstars'] = savedTags['detectedstars']
       if 'hfr' in savedTags:
         image['hfr'] = savedTags['hfr']
+        if image['hfr'] == 'NaN':
+          image['hfr'] = 0
       if 'eccentricity' in savedTags:
         image['eccentricity'] = savedTags['eccentricity']
+
       return image
     except KeyError:
       print(f"Fits data in Exif Header missing/incomplete, rebuild...")

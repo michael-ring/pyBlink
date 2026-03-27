@@ -43,19 +43,126 @@
      <number>0</number>
     </property>
     <item>
-     <layout class="QVBoxLayout" name="verticalLayout_2" stretch="0,0,0">
+     <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <layout class="QHBoxLayout" name="horizontalImagesLayout" stretch="0,0">
+       <layout class="QHBoxLayout" name="imagesAndTablesHBox">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
         <item>
-         <widget class="QGraphicsView" name="graphicsView">
-          <property name="mouseTracking">
-           <bool>true</bool>
-          </property>
-         </widget>
+         <layout class="QVBoxLayout" name="leftVBox">
+          <item>
+           <widget class="QGraphicsView" name="graphicsView">
+            <property name="mouseTracking">
+             <bool>true</bool>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTableWidget" name="tableWidget">
+            <property name="sizeAdjustPolicy">
+             <enum>QAbstractScrollArea::SizeAdjustPolicy::AdjustToContents</enum>
+            </property>
+            <property name="editTriggers">
+             <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
+            </property>
+            <property name="selectionMode">
+             <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
+            </property>
+            <property name="selectionBehavior">
+             <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
+            </property>
+            <property name="rowCount">
+             <number>0</number>
+            </property>
+            <property name="columnCount">
+             <number>12</number>
+            </property>
+            <attribute name="verticalHeaderVisible">
+             <bool>false</bool>
+            </attribute>
+            <column>
+             <property name="text">
+              <string>Date</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Duration</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Target</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Filter</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>RotatorAngle</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>PierSide</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Mean</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>FWHM</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Stars</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Status</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Status Others</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>Startrails</string>
+             </property>
+            </column>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
-         <layout class="QVBoxLayout" name="verticalLayout" stretch="0">
-          <item alignment="Qt::AlignmentFlag::AlignTop">
+         <layout class="QVBoxLayout" name="rightVBox">
+          <item>
            <widget class="QGraphicsView" name="detailsView">
             <property name="minimumSize">
              <size>
@@ -71,113 +178,45 @@
             </property>
            </widget>
           </item>
+          <item>
+           <widget class="QTableWidget" name="overviewTableWidget">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="editTriggers">
+             <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
+            </property>
+            <column>
+             <property name="text">
+              <string>Filter</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>#Subs</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>StarsRank</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>MeanRank</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>FWHMRank</string>
+             </property>
+            </column>
+           </widget>
+          </item>
          </layout>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontaTableslLayout">
-        <item>
-         <widget class="QTableWidget" name="tableWidget">
-          <property name="sizeAdjustPolicy">
-           <enum>QAbstractScrollArea::SizeAdjustPolicy::AdjustToContents</enum>
-          </property>
-          <property name="editTriggers">
-           <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
-          </property>
-          <property name="selectionMode">
-           <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
-          </property>
-          <property name="selectionBehavior">
-           <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
-          </property>
-          <property name="rowCount">
-           <number>0</number>
-          </property>
-          <property name="columnCount">
-           <number>12</number>
-          </property>
-          <attribute name="verticalHeaderVisible">
-           <bool>false</bool>
-          </attribute>
-          <column>
-           <property name="text">
-            <string>Date</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Duration</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Target</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Filter</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>RotatorAngle</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>PierSide</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Mean</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>FWHM</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Stars</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Status</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Status Others</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Startrails</string>
-           </property>
-          </column>
-         </widget>
-        </item>
-        <item>
-         <widget class="QTableWidget" name="overviewTableWidget">
-          <property name="editTriggers">
-           <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
-          </property>
-          <column>
-           <property name="text">
-            <string>Key</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>Value</string>
-           </property>
-          </column>
-         </widget>
         </item>
        </layout>
       </item>
