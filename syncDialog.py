@@ -35,8 +35,8 @@ class syncDialog(Ui_SyncDialog, QDialog):
   def setImageCache(self, imageCache):
     self.imageCache = imageCache
 
-  def setS3CachePath(self, s3CachePath):
-    self.s3CachePath = s3CachePath
+  #def setS3CachePath(self, s3CachePath):
+  #  self.s3CachePath = s3CachePath
 
   def listener(self, mydict):
     self.progressBar_overall.setValue(mydict['progress'] * 100)
@@ -67,39 +67,55 @@ class syncDialog(Ui_SyncDialog, QDialog):
     super().open()
     syncSuccess = False
     try:
-      if self.specificSyncDirectory is not None:
-        self.label_syncToServer.setVisible(True)
-        QtGui.QGuiApplication.processEvents()
-        rclone.copy(self.imageCache.getCacheDirectory() / self.specificSyncDirectory,f'{self.s3CachePath}{self.specificSyncDirectory}', listener=self.listener, show_progress=True,
+      self.label_syncToServer.setVisible(True)
+      QtGui.QGuiApplication.processEvents()
+      QtGui.QGuiApplication.processEvents()
+      for dataSource,config in self.imageCache.dataSources.items():
+        if config['enabled']== False:
+          continue
+        if self.specificSyncDirectory is not None and not self.specificSyncDirectory.startswith(dataSource+'/'):
+          continue
+        if (Path(self.imageCache.getCacheDirectory()) / dataSource).exists():
+          if self.specificSyncDirectory is not None:
+            rclone.copy(Path(self.imageCache.getCacheDirectory()) / self.specificSyncDirectory,config["CachePath"]+self.specificSyncDirectory.split('/')[1], listener=self.listener, show_progress=True,
+                        ignore_existing=True, args=["--transfers 4 --exclude '*.json'"])
+          else:
+            rclone.copy(Path(self.imageCache.getCacheDirectory()) / dataSource, config["CachePath"], listener=self.listener, show_progress=True,
+                        ignore_existing=True, args=["--transfers 4 --exclude '*.json'"])
+      self.label_syncStatus.setVisible(True)
+      QtGui.QGuiApplication.processEvents()
+      QtGui.QGuiApplication.processEvents()
+      for dataSource,config in self.imageCache.dataSources.items():
+        if config['enabled']== False:
+          continue
+        if self.specificSyncDirectory is not None and not self.specificSyncDirectory.startswith(dataSource+'/'):
+          continue
+        if (Path(self.imageCache.getCacheDirectory()) / dataSource).exists():
+          if self.specificSyncDirectory is not None:
+            rclone.copy(Path(self.imageCache.getCacheDirectory()) / self.specificSyncDirectory,config["CachePath"]+self.specificSyncDirectory.split('/')[1], listener=self.listener, show_progress=True,
+                        ignore_existing=False, args=[f'--transfers 4 --include "status-{psutil.Process().username()}.json"'])
+          else:
+            rclone.copy(Path(self.imageCache.getCacheDirectory()) / dataSource, config["CachePath"], listener=self.listener, show_progress=True,
+                        ignore_existing=False, args=[f'--transfers 4 --include "status-{psutil.Process().username()}.json"'])
+      self.label_syncFromServer.setVisible(True)
+      QtGui.QGuiApplication.processEvents()
+      QtGui.QGuiApplication.processEvents()
+      for dataSource,config in self.imageCache.dataSources.items():
+        if config['enabled']== False:
+          continue
+        if self.specificSyncDirectory is not None and not self.specificSyncDirectory.startswith(dataSource+'/'):
+          continue
+        if self.specificSyncDirectory is not None:
+          rclone.copy(config["CachePath"]+self.specificSyncDirectory.split('/')[1], Path(self.imageCache.getCacheDirectory()) / self.specificSyncDirectory, listener=self.listener, show_progress=True,
                     ignore_existing=True, args=["--transfers 4 --exclude '*.json'"])
-        self.label_syncStatus.setVisible(True)
-        QtGui.QGuiApplication.processEvents()
-        rclone.copy(self.imageCache.getCacheDirectory() / self.specificSyncDirectory,f'{self.s3CachePath}{self.specificSyncDirectory}', listener=self.listener, show_progress=True,
-                    ignore_existing=False, args=[f'--transfers 4 --include "status-{psutil.Process().username()}.json"'])
-        self.label_syncFromServer.setVisible(True)
-        QtGui.QGuiApplication.processEvents()
-        rclone.copy(f'{self.s3CachePath}{self.specificSyncDirectory}',
-                    self.imageCache.getCacheDirectory() / self.specificSyncDirectory, listener=self.listener, show_progress=True,
-                    ignore_existing=True, args=["--transfers 4 --exclude '*.json'"])
-        rclone.copy(f'{self.s3CachePath}{self.specificSyncDirectory}',
-                    self.imageCache.getCacheDirectory() / self.specificSyncDirectory, listener=self.listener,
-                    show_progress=True,
+          rclone.copy(config["CachePath"]+self.specificSyncDirectory.split('/')[1], Path(self.imageCache.getCacheDirectory()) / self.specificSyncDirectory,listener=self.listener,show_progress=True,
                     ignore_existing=False, args=["--transfers 4 --include '*.json'"])
-      else:
-        self.label_syncToServer.setVisible(True)
-        QtGui.QGuiApplication.processEvents()
-        rclone.copy(self.imageCache.getCacheDirectory(),self.s3CachePath, listener=self.listener, show_progress=True,
+        else:
+          rclone.copy(config["CachePath"], Path(self.imageCache.getCacheDirectory()) / dataSource, listener=self.listener, show_progress=True,
                     ignore_existing=True, args=["--transfers 4 --exclude '*.json'"])
-        self.label_syncStatus.setVisible(True)
-        QtGui.QGuiApplication.processEvents()
-        rclone.copy(self.imageCache.getCacheDirectory(),self.s3CachePath, listener=self.listener, show_progress=True,
-                    ignore_existing=False, args=[f'--transfers 4 --include "status-{psutil.Process().username()}.json"'])
-        self.label_syncFromServer.setVisible(True)
-        QtGui.QGuiApplication.processEvents()
-        rclone.copy(self.s3CachePath, self.imageCache.getCacheDirectory(), listener=self.listener, show_progress=True,
-                    ignore_existing=True, args=["--transfers 4 --exclude '*.json'"])
-        rclone.copy(self.s3CachePath, self.imageCache.getCacheDirectory(), listener=self.listener, show_progress=True,
-                  ignore_existing=False, args=["--transfers 4 --include '*.json'"])
+          rclone.copy(config["CachePath"], Path(self.imageCache.getCacheDirectory()) / dataSource,listener=self.listener,show_progress=True,
+                    ignore_existing=False, args=["--transfers 4 --include '*.json'"])
+
       self.progressBar_overall.setValue(100)
       syncSuccess = True
     except utils.RcloneException as e:

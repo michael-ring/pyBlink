@@ -209,7 +209,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Sync local Cache to remote Cache</string>
+    <string>Sync local Cache to remote Cache...</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_syncFromServer">
@@ -222,7 +222,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Sync remote Cache to local Cache</string>
+    <string>Sync remote Cache to local Cache...</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_syncStatus">
@@ -235,7 +235,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Sync local Status to remote Cache</string>
+    <string>Sync local Status to remote Cache...</string>
    </property>
   </widget>
  </widget>

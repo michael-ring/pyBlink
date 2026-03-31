@@ -23,12 +23,15 @@ class imageCache(QtCore.QObject):
     self.cacheDirectory = Path(user_cache_dir(applicationName))
     self.cacheDirectory.mkdir(parents=True, exist_ok=True)
     self.images = {}
-    self.telescopeShortNames = {}
+    #self.telescopeShortNames = {}
+    self.dataSources = {}
     self.fileProgressSlot = 0
     self.imageMetaData = {}
 
-  def setTelescopeShortNames(self, telescopeShortNames):
-    self.telescopeShortNames = telescopeShortNames
+  #def setTelescopeShortNames(self, telescopeShortNames):
+  #  self.telescopeShortNames = telescopeShortNames
+  def setDataSources(self,dataSources):
+    self.dataSources = dataSources
 
   def getCacheDirectory(self):
     return self.cacheDirectory

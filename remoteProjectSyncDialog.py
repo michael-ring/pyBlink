@@ -43,7 +43,7 @@ class remoteProjectSyncDialog(Ui_remoteProjectSyncDialog, QDialog):
     self.close()
     sd = syncDialog(self.parent())
     sd.setSpecificSyncDirectory(specificSyncDirectory=f"{telescope}/{target}")
-    sd.setS3CachePath(self.s3CachePath)
+    #sd.setS3CachePath(self.s3CachePath)
     sd.setImageCache(self.imageCache)
     sd.open()
 
@@ -51,29 +51,44 @@ class remoteProjectSyncDialog(Ui_remoteProjectSyncDialog, QDialog):
     super().open()
     try:
       self.progressBar_overall.setValue(25)
-      files = rclone.ls(self.s3CachePath, max_depth=2, dirs_only=True)
-      imageDirectories = rclone.ls(self.s3ImagesPath, max_depth=3, dirs_only=True)
       latestImageDirectories = {}
-      for imageDirectory in imageDirectories:
-        if imageDirectory['Path'].count('/') == 2:
-          key=imageDirectory['Path'].split('/')[0]+"/"+imageDirectory['Path'].split('/')[1]
-          if key not in latestImageDirectories:
-            latestImageDirectories[key] = imageDirectory['Name']
-          else:
-            if latestImageDirectories[key] < imageDirectory['Name']:
+      for dataSource,config in self.imageCache.dataSources.items():
+        if config['enabled']== False:
+          continue
+        try:
+          files = rclone.ls(config['CachePath'], max_depth=1, dirs_only=True)
+        except utils.RcloneException as e:
+          print(e.error_msg)
+          files = []
+        try:
+          imageDirectories = rclone.ls(config['ImagesPath'], max_depth=2, dirs_only=True)
+        except utils.RcloneException as e:
+          print(e.error_msg)
+          imageDirectories = []
+        for imageDirectory in imageDirectories:
+          if imageDirectory['Path'].count('/') == 1:
+            #key=imageDirectory['Path'].split('/')[0]+"/"+imageDirectory['Path'].split('/')[1]
+            key=dataSource+'/'+imageDirectory['Path'].split('/')[0]
+            if key not in latestImageDirectories:
               latestImageDirectories[key] = imageDirectory['Name']
+            else:
+              if latestImageDirectories[key] < imageDirectory['Name']:
+                latestImageDirectories[key] = imageDirectory['Name']
 
-      self.progressBar_overall.setMaximum(len(files)+25)
-      telescopeItems={}
-      for fileInfo in files:
-        if fileInfo['Path'].count('/') == 0:
-          item = QTreeWidgetItem(self.treeWidget)
-          item.setText(0, fileInfo['Path'])
-          telescopeItems[fileInfo['Path']] = item
-        if fileInfo['Path'].count('/') == 1:
-          subItem = QTreeWidgetItem(telescopeItems[fileInfo['Path'].split('/')[0]])
-          subItem.setText(1, fileInfo['Path'].split('/')[1])
-          key=fileInfo['Path'].split('/')[0]+'/'+fileInfo['Path'].split('/')[1]
+        self.progressBar_overall.setMaximum(len(files)+25)
+        telescopeItems={}
+        item = QTreeWidgetItem(self.treeWidget)
+        item.setText(0, dataSource)
+        telescopeItems[dataSource] = item
+        for fileInfo in files:
+          #if fileInfo['Path'].count('/') == 0:
+          #  item = QTreeWidgetItem(self.treeWidget)
+          #  item.setText(0, fileInfo['Path'])
+          #  telescopeItems[fileInfo['Path']] = item
+          #if fileInfo['Path'].count('/') == 1:
+          subItem = QTreeWidgetItem(telescopeItems[dataSource])
+          subItem.setText(1, fileInfo['Path'])
+          key=dataSource+'/'+fileInfo['Path']
           if key in latestImageDirectories:
             subItem.setText(2, latestImageDirectories[key])
           else:

@@ -67,20 +67,17 @@ class MainWindow(QMainWindow):
       self.config = json.load(open(Path(__file__).parent / 'config.json'))
     except:
       self.config = {}
-      self.config["S3CachePath"] = "cache:cache/"
-      self.config["S3ImagesPath"] = "upload:upload/"
-      self.config["lastUsedLocalDir"] = str(os.getcwd())
-      self.config["shortNames"] = {
-        "Lacerta FN1506c": "speedy",
-        "Lacerta FN510c": "slt",
-        "Lacerta FN25010c": "slt",
-        "Lacerta 250": "slt",
-        "Askar ACL200": "vst",
-        "Askar ACL200 F4": "vst"
+      self.config["datasources"] = {}
+      self.config["datasources"]["slt"] = {
+        "name":"slt",
+        "enabled":True,
+        "ImagesPath":"upload:/upload",
+        "CachePath":"cache:/cache"
       }
+      self.config["lastUsedLocalDir"] = str(os.getcwd())
 
     self.imageCache = imageCache(self.windowTitle())
-    self.imageCache.setTelescopeShortNames(self.config["shortNames"])
+    self.imageCache.setDataSources(self.config["datasources"])
     self.imageCache.cacheUpdated.connect(self.onUpdateImageCache)
 
   def onUpdateImageCache(self):
@@ -283,7 +280,7 @@ class MainWindow(QMainWindow):
   def actionSync(self):
     self.imageCache.persistStatus()
     sd = syncDialog(self)
-    sd.setS3CachePath(self.config['S3CachePath'])
+    #sd.setS3CachePath(self.config['S3CachePath'])
     sd.setSpecificSyncDirectory(None)
     sd.setImageCache(self.imageCache)
     sd.open()
@@ -298,15 +295,15 @@ class MainWindow(QMainWindow):
       lsd = localSyncDialog(self)
       lsd.setWorkingDirectory(self.workingDirectory)
       lsd.setImageCache(self.imageCache)
-      lsd.setTelescopeShortNames(self.config['shortNames'])
+      #lsd.setTelescopeShortNames(self.config['shortNames'])
       lsd.open()
       pass
 
   def actionRemoteOpen(self):
     self.imageCache.persistStatus()
     rpsd = remoteProjectSyncDialog(self)
-    rpsd.setS3CachePath(self.config['S3CachePath'])
-    rpsd.setS3ImagesPath(self.config['S3ImagesPath'])
+    #rpsd.setS3CachePath(self.config['S3CachePath'])
+    #rpsd.setS3ImagesPath(self.config['S3ImagesPath'])
     rpsd.setImageCache(self.imageCache)
     rpsd.open()
 

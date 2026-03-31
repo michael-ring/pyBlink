@@ -1,9 +1,49 @@
 {
-  "S3CachePath": "cache:cache/",
-  "lastUsedLocalDir": "/Volumes/Astro/slt/slt/IC 63",
-  "shortNames": {
-    "Lacerta FN1506c": "speedy",
-    "Lacerta 250": "slt",
-    "Askar ACL200": "vst"
-  }
+  "datasources": {
+    "cdk14": {
+      "enabled": true,
+      "CachePath": "cache:cache/cdk14/",
+      "ImagesPath": "cdk14prod:cdk14prod/cdk14prod",
+      "fitsaliases": [
+        "CDK14",
+        "cdk14"
+      ]
+    },
+    "vst": {
+      "enabled": true,
+      "CachePath": "cache:cache/vst/",
+      "ImagesPath": "upload:upload/vst/",
+      "fitsaliases": [
+        "Askar ACL200",
+        "Askar ACL200 F4"
+      ]
+    },
+    "slt": {
+      "enabled": true,
+      "CachePath": "cache:cache/slt/",
+      "ImagesPath": "upload:upload/slt/",
+      "fitsaliases": [
+        "Lacerta FN510c",
+        "Lacerta FN25010c",
+        "Lacerta 250"
+      ]
+    },
+    "speedy": {
+      "enabled": true,
+      "CachePath": "cache:cache/speedy/",
+      "ImagesPath": "upload:upload/speedy/",
+      "fitsaliases": [
+        "Lacerta FN1506c"
+      ]
+    },
+    "sharpy": {
+      "enabled": true,
+      "CachePath": "cache:cache/sharpy/",
+      "ImagesPath": "upload:upload/sharpy/",
+      "fitsaliases": [
+        "SQA-55"
+      ]
+    }
+  },
+  "lastUsedLocalDir": "/Volumes/Astro-1/slt/cdk14/NGC 4945"
 }
