@@ -3,3 +3,4 @@
 ./.venv/bin/pyside6-uic -g python syncDialog.ui >ui_syncdialog.py
 ./.venv/bin/pyside6-uic -g python remoteProjectSyncDialog.ui >ui_remoteprojectsyncdialog.py
 ./.venv/bin/pyside6-uic -g python localSyncDialog.ui >ui_localsyncdialog.py
+./.venv/bin/pyside6-uic -g python deleteDialog.ui >ui_deletedialog.py

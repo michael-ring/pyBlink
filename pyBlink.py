@@ -14,6 +14,7 @@ import psutil
 from remoteProjectSyncDialog import remoteProjectSyncDialog
 from syncDialog import syncDialog
 from imageCache import imageCache
+from deleteDialog import deleteDialog
 
 
 # Subclass QMainWindow to customize your application's main window
@@ -266,15 +267,9 @@ class MainWindow(QMainWindow):
 
 
   def actionDelete(self):
-    # self.imageCache.persistStatus()
-    for index, image in self.imageCache.images.copy().items():
-      if image['status'] == '✘':
-        self.imageCache.images[index]['visible'] = False
-        if Path(image['fitspath']).exists() and Path(image['fitspath']).is_file():
-          Path(image['fitspath']).unlink()
-          # if Path(image['cachepath']).exists() and Path(image['cachepath']).is_file():
-          #  Path(image['cachepath']).unlink()
-          # self.imageCache.images.pop(index)
+    dd = deleteDialog(self)
+    dd.setImageCache(self.imageCache)
+    dd.open()
     self.populateTableWidget()
 
   def actionSync(self):

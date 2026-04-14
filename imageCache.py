@@ -57,8 +57,9 @@ class imageCache(QtCore.QObject):
         print(f"Loading Fits Data from File {file} to detect cachedir")
         header = fits.getheader(file)
         telescope = header['TELESCOP']
-        if telescope in self.telescopeShortNames:
-          telescope = self.telescopeShortNames[telescope]
+        for dataSource in self.dataSources:
+          if self.dataSources[dataSource]['enabled'] and telescope in self.dataSources[dataSource]['fitsaliases']:
+            telescope = dataSource
         cachePath = self.cacheDirectory / telescope / header['OBJECT']
         cachePathFound = True
       self.progressUpdate.emit(doneCount)
