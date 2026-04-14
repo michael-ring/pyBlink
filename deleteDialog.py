@@ -32,12 +32,12 @@ class deleteDialog(Ui_deleteDialog, QDialog):
       telescope = cachepath.parts[0]
       target = cachepath.parts[1]
       images_path = self.imageCache.dataSources[telescope]['ImagesPath']
-      remote_path = f"{images_path}/{target}"
+      remote_path = f"{images_path}/{target}".replace('//','/')
       try:
         self.label_current.setText(f"Loading List of Target Files from remote")
         QtGui.QGuiApplication.processEvents()
         QtGui.QGuiApplication.processEvents()
-        file_list,_ = rclone.utils.run_rclone_cmd(f'lsf "{remote_path}"',['--max-depth 2','--files-only','--include "*fits*"'])
+        file_list,_ = rclone.utils.run_rclone_cmd(f'lsf "{remote_path}"',['--max-depth 2','--include "*fits*"','--files-only'])
         file_list=file_list.split('\n')
         self.progressBar_overall.setValue(0)
       except utils.RcloneException as e:
@@ -59,7 +59,7 @@ class deleteDialog(Ui_deleteDialog, QDialog):
           QtGui.QGuiApplication.processEvents()
           try:
             #pass
-            rclone.delete(f"{images_path}/{targetImage}")
+            rclone.delete(f"{images_path}/{targetImage}".replace('//','/'))
           except utils.RcloneException as e:
             print(e.error_msg)
           self.progressBar_overall.setValue(0)
