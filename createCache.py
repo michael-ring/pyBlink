@@ -8,6 +8,7 @@ import cv2
 from auto_stretch import apply_stretch
 from PIL import Image
 import psutil
+from imageCache import _safe_username
 
 def convertFits(file):
   image={}
@@ -102,7 +103,7 @@ try:
 except:
   config = {}
   config["S3BucketName"] = "uploadsla"
-  config["username"] = psutil.Process().username()
+  config["username"] = _safe_username()
   config["lastUsedLocalDir"] = os.getcwd()
   config["lastUsedS3Dir"] = config["S3BucketName"] + ":/"
   config["shortNames"] = {}

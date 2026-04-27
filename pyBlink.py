@@ -24,8 +24,10 @@ class MainWindow(QMainWindow):
     self.ui = Ui_MainWindow()
     self.ui.setupUi(self)
 
-    screensize = self.screen().size()
-    self.resize(screensize.width(), screensize.height())
+    #screensize = self.screen().size() # that does not work on Windows, the pyblink windo is bigger than the screen
+    screensize = self.screen().availableGeometry().size()
+    #self.resize(screensize.width(), screensize.height())
+    self.setGeometry(self.screen().availableGeometry())
     newHeightOfGraphicsView = (screensize.width() - self.ui.detailsView.width() - 8) * 2 // 3
     if newHeightOfGraphicsView > screensize.height() - 300:
       self.ui.graphicsView.setMinimumSize((screensize.height() - 300) * 3 // 2, screensize.height() - 300)

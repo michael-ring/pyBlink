@@ -6,7 +6,7 @@ import psutil
 
 from ui_syncdialog import Ui_SyncDialog
 from imageCache import imageCache
-
+from imageCache import _safe_username
 
 class syncDialog(Ui_SyncDialog, QDialog):
 
@@ -93,10 +93,10 @@ class syncDialog(Ui_SyncDialog, QDialog):
         if (Path(self.imageCache.getCacheDirectory()) / dataSource).exists():
           if self.specificSyncDirectory is not None:
             rclone.copy(Path(self.imageCache.getCacheDirectory()) / self.specificSyncDirectory,config["CachePath"]+self.specificSyncDirectory.split('/')[1], listener=self.listener, show_progress=True,
-                        ignore_existing=False, args=[f'--transfers 4 --include "status-{psutil.Process().username()}.json"'])
+                        ignore_existing=False, args=[f'--transfers 4 --include "status-{_safe_username()}.json"'])
           else:
             rclone.copy(Path(self.imageCache.getCacheDirectory()) / dataSource, config["CachePath"], listener=self.listener, show_progress=True,
-                        ignore_existing=False, args=[f'--transfers 4 --include "status-{psutil.Process().username()}.json"'])
+                        ignore_existing=False, args=[f'--transfers 4 --include "status-{_safe_username()}.json"'])
       self.label_syncFromServer.setVisible(True)
       QtGui.QGuiApplication.processEvents()
       QtGui.QGuiApplication.processEvents()
