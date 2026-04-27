@@ -12,6 +12,12 @@ from astropy.io import fits
 from PySide6.QtCore import Signal
 from concurrent.futures import ThreadPoolExecutor
 
+# Helper to make pyblink work on Windows:
+def _safe_username():
+    name = psutil.Process().username()
+    if '\\' in name:
+        name = name.split('\\')[-1]
+    return name
 
 class imageCache(QtCore.QObject):
   progressUpdate = Signal(int)
@@ -173,8 +179,13 @@ class imageCache(QtCore.QObject):
       image['object'] = header['OBJECT']
       image['telescope'] = header['TELESCOP']
       image['exposure'] = header['EXPOSURE']
-      if image['telescope'] in self.telescopeShortNames:
-        image['telescope'] = self.telescopeShortNames[image['telescope']]
+      #self.telescopeShortNames has been commented out and replaced with seld.dataSources
+      #if image['telescope'] in self.telescopeShortNames:
+      #  image['telescope'] = self.telescopeShortNames[image['telescope']]
+      for dataSource in self.dataSources:
+        if self.dataSources[dataSource]['enabled'] and image['telescope'] in self.dataSources[dataSource]['fitsaliases']:
+          image['telescope'] = dataSource
+
       image['date'] = header['DATE-LOC'].split('.')[0].replace('T', ' ')
       image['pierside'] = header['PIERSIDE']
       if 'ROTATOR' in header:
@@ -259,7 +270,7 @@ class imageCache(QtCore.QObject):
   def persistStatus(self):
     if len(self.images) > 0:
       firstIndex = next(iter(self.images))
-      statusfile=self.images[firstIndex]['cachepath'].parent / f'status-{psutil.Process().username()}.json'
+      statusfile=self.images[firstIndex]['cachepath'].parent / f'status-{_safe_username()}.json'
       imagesStatus = {}
       for index, image in self.images.items():
         imagesStatus[index] = {'status': image['status'], 'statusothers': image['statusothers'],
@@ -272,7 +283,7 @@ class imageCache(QtCore.QObject):
     if len(self.images) > 0:
       statusFileDirectory=Path(self.images[next(iter(self.images))]['cachepath'].parent)
       for statusFile in Path(statusFileDirectory).glob("status-*.json"):
-        if statusFile.name == f"status-{psutil.Process().username()}.json":
+        if statusFile.name == f"status-{_safe_username()}.json":
           print(f"Loading own status from {statusFile}")
           statusImages = json.load(open(statusFile))
           for index in statusImages:
@@ -281,7 +292,7 @@ class imageCache(QtCore.QObject):
               if statusImages[index]['startrails'] == '✔':
                 self.images[index]['startrails'] = '✔'
       for statusFile in Path(statusFileDirectory).glob("status-*.json"):
-        if statusFile.name != f"status-{psutil.Process().username()}.json":
+        if statusFile.name != f"status-{_safe_username()}.json":
           print(f"Loading other status from {statusFile}")
           statusImages = json.load(open(statusFile))
           for index in statusImages:

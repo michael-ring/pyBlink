@@ -10,7 +10,7 @@ from pathlib import Path
 from astropy.io import fits
 from imageCache import imageCache
 import random
-
+from imageCache import _safe_username
 
 class localSyncDialog(Ui_localSyncDialog, QDialog):
   def cleanupDialog(self):
@@ -90,7 +90,7 @@ class localSyncDialog(Ui_localSyncDialog, QDialog):
     if len(self.imageCache.images) > 0:
       statusFileDirectory=Path(self.imageCache.images[next(iter(self.imageCache.images))]['cachepath'].parent)
       for statusfile in Path(statusFileDirectory).glob("status-*.json"):
-        if statusfile.name == f"status-{psutil.Process().username()}.json":
+        if statusfile.name == f"status-{_safe_username()}.json":
           print(f"Loading own status from {statusfile}")
           statusImages = json.load(open(statusfile))
           for index in statusImages:
