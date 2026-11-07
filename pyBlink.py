@@ -1,7 +1,10 @@
+import math
 import os
+import shutil
 import sys
+import tempfile
 
-from PySide6.QtCore import QEvent, Qt
+from PySide6.QtCore import QEvent, Qt, QProcess
 from PySide6.QtWidgets import QApplication, QMainWindow, QFileDialog, QListWidgetItem, QGraphicsScene, QTableWidgetItem, \
   QAbstractItemView, QHeaderView
 from PySide6.QtGui import QPixmap, QImage, QPainter, QKeyEvent, QColor
@@ -11,6 +14,7 @@ from ui_mainwindow import Ui_MainWindow
 from pathlib import Path
 import json
 import psutil
+from astropy.io import fits
 from remoteProjectSyncDialog import remoteProjectSyncDialog
 from syncDialog import syncDialog
 from imageCache import imageCache
@@ -54,6 +58,10 @@ class MainWindow(QMainWindow):
 
     self.scene = QGraphicsScene()
     self.ui.graphicsView.setScene(self.scene)
+    self.imageOneToOne = False
+    self.imageFocus = None
+    self.ui.graphicsView.setFocusPolicy(Qt.FocusPolicy.NoFocus)
+    self.ui.graphicsView.viewport().installEventFilter(self)
     # Disable scrollbars on the graphics view (they remain off even when scene is changed)
     self.ui.graphicsView.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
     self.ui.graphicsView.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
@@ -82,6 +90,7 @@ class MainWindow(QMainWindow):
     self.imageCache = imageCache(self.windowTitle())
     self.imageCache.setDataSources(self.config["datasources"])
     self.imageCache.cacheUpdated.connect(self.onUpdateImageCache)
+    remoteProjectSyncDialog.clearSessionCache()
 
   def onUpdateImageCache(self):
     self.populateTableWidget(loadData=True)
@@ -174,6 +183,18 @@ class MainWindow(QMainWindow):
     self.statusBar().showMessage(f"mousePressEvent {e.position()}")
 
   def eventFilter(self, watched, event, /):
+    if watched == self.ui.graphicsView.viewport() and event.type() == QEvent.Type.MouseButtonPress:
+      if event.button() == Qt.MouseButton.LeftButton and hasattr(self, 'image'):
+        point = self.ui.graphicsView.mapToScene(event.position().toPoint())
+        if 0 <= point.x() < self.image.width() and 0 <= point.y() < self.image.height():
+          if self.imageOneToOne:
+            self.imageOneToOne = False
+          else:
+            self.imageFocus = (point.x(), point.y())
+            self.imageOneToOne = True
+          self.renderMainImage()
+          self.ui.tableWidget.setFocus(Qt.FocusReason.OtherFocusReason)
+          return True
     if watched == self.ui.tableWidget:
       if event.type() == QEvent.Type.KeyPress:
         currentRow = self.ui.tableWidget.currentRow()
@@ -207,8 +228,74 @@ class MainWindow(QMainWindow):
             self.ui.tableWidget.item(currentRow, self.startrailColumn).setText('')
             self.imageCache.images[imagesIndex]['startrails'] = ''
           return True
+        if QKeyEvent(event).key() == Qt.Key.Key_S:
+          self.plateSolve(imagesIndex)
+          return True
     # pass the event on to the parent class
     return QMainWindow.eventFilter(self, watched, event)
+
+  def findAstap(self):
+    candidates = [self.config.get("astapPath"), shutil.which("astap"), shutil.which("astap_cli"),
+                  "/Applications/ASTAP.app/Contents/MacOS/astap",
+                  "C:\\Program Files\\astap\\astap.exe"]
+    for candidate in candidates:
+      if candidate and Path(candidate).is_file():
+        return candidate
+    return None
+
+  def plateSolve(self, imagesIndex):
+    if getattr(self, "astapProcess", None) is not None:
+      self.statusBar().showMessage("Plate solving already running...")
+      return
+    astap = self.findAstap()
+    if astap is None:
+      self.statusBar().showMessage("ASTAP not found, set 'astapPath' in config.json")
+      return
+    image = self.imageCache.images[imagesIndex]
+    source = Path(image['fitspath'])
+    if not source.exists():
+      self.statusBar().showMessage(f"Plate solving needs the FITS file, not found: {source}")
+      return
+    self.solveDir = tempfile.mkdtemp(prefix="pyBlink-astap-")
+    self.solveBase = str(Path(self.solveDir) / "solve")
+    self.astapProcess = QProcess(self)
+    self.astapProcess.finished.connect(self.onPlateSolveFinished)
+    self.astapProcess.errorOccurred.connect(self.onPlateSolveFinished)
+    self.statusBar().showMessage(f"Plate solving {source.name} ...")
+    self.astapProcess.start(astap, ["-f", str(source), "-wcs", "-o", self.solveBase])
+
+  def onPlateSolveFinished(self, *args):
+    process = self.astapProcess
+    if process is None:
+      return
+    self.astapProcess = None
+    wcsFile = Path(self.solveBase + ".wcs")
+    try:
+      if not wcsFile.exists():
+        self.statusBar().showMessage("Plate solving failed: no solution found")
+        return
+      header = fits.Header.fromfile(str(wcsFile), sep='', endcard=False, padding=False)
+      ra = header['CRVAL1']
+      dec = header['CRVAL2']
+      if 'CROTA2' in header:
+        rotation = header['CROTA2']
+      else:
+        rotation = math.degrees(math.atan2(-header['CD1_2'], header['CD2_2']))
+      if rotation < 0:
+        rotation += 180
+      scale = math.hypot(header['CD1_1'], header['CD2_1']) * 3600
+      raH = ra / 15
+      raM = (raH - int(raH)) * 60
+      decAbs = abs(dec)
+      decM = (decAbs - int(decAbs)) * 60
+      self.statusBar().showMessage(
+        f"Solved: RA {int(raH):02d}h {int(raM):02d}m {(raM - int(raM)) * 60:04.1f}s ({ra:.4f}°)  "
+        f"Dec {'-' if dec < 0 else '+'}{int(decAbs):02d}° {int(decM):02d}' {(decM - int(decM)) * 60:04.1f}\" ({dec:.4f}°)  "
+        f"Rotation {rotation:.2f}°  Scale {scale:.2f}\"/px")
+    except Exception as e:
+      self.statusBar().showMessage(f"Plate solving failed: {e}")
+    finally:
+      shutil.rmtree(self.solveDir, ignore_errors=True)
 
   def radioButtonCheck(self):
     self.populateTableWidget()
@@ -310,6 +397,50 @@ class MainWindow(QMainWindow):
       json.dump(self.config, file, ensure_ascii=False, indent=2)
     event.accept()
 
+  def resizeEvent(self, event):
+    super().resizeEvent(event)
+    if hasattr(self, 'image') and not self.image.isNull():
+      self.renderMainImage()
+
+  def renderMainImage(self):
+    pixmap = QPixmap.fromImage(self.image)
+    if pixmap.isNull():
+      return
+
+    self.scene.clear()
+    self.scene.addPixmap(pixmap)
+    self.scene.setSceneRect(0, 0, pixmap.width(), pixmap.height())
+    viewport = self.ui.graphicsView.viewport().size()
+    if viewport.width() <= 0 or viewport.height() <= 0:
+      return
+
+    self.ui.graphicsView.resetTransform()
+    if not self.imageOneToOne:
+      scale = min(viewport.width() / pixmap.width(), viewport.height() / pixmap.height())
+      self.ui.graphicsView.scale(scale, scale)
+
+    if self.imageFocus is None:
+      self.imageFocus = (pixmap.width() / 2, pixmap.height() / 2)
+
+    if self.imageOneToOne:
+      focusX, focusY = self.imageFocus
+      halfWidth = viewport.width() / 2
+      halfHeight = viewport.height() / 2
+      if 2 * halfWidth >= pixmap.width():
+        focusX = pixmap.width() / 2
+      else:
+        focusX = min(max(focusX, halfWidth), pixmap.width() - halfWidth)
+      if 2 * halfHeight >= pixmap.height():
+        focusY = pixmap.height() / 2
+      else:
+        focusY = min(max(focusY, halfHeight), pixmap.height() - halfHeight)
+      self.imageFocus = (focusX, focusY)
+      self.ui.graphicsView.centerOn(focusX, focusY)
+    else:
+      self.ui.graphicsView.centerOn(pixmap.width() / 2, pixmap.height() / 2)
+    self.ui.graphicsView.setRenderHint(QPainter.RenderHint.Antialiasing)
+    self.ui.graphicsView.show()
+
   def actionCurrentItemChanged(self, item: QTableWidgetItem):
     if item is None:
       return
@@ -320,14 +451,7 @@ class MainWindow(QMainWindow):
     self.updateOverviewTableWithRankings(idx, item.row())
 
     self.image = QImage(self.imageCache.images[idx]['cachepath'])
-    scene = QGraphicsScene(0, 0, self.ui.graphicsView.size().width(), self.ui.graphicsView.size().height())
-    pixmap = QPixmap(self.image)
-    pixmapitem = scene.addPixmap(pixmap)
-    pixmapitem.setScale(self.ui.graphicsView.size().width() / pixmap.width())
-    pixmapitem.setPos(0, 0)
-    self.ui.graphicsView.setScene(scene)
-    self.ui.graphicsView.setRenderHint(QPainter.RenderHint.Antialiasing)
-    self.ui.graphicsView.show()
+    self.renderMainImage()
 
     scene = QGraphicsScene(0, 0, self.ui.detailsView.size().width(), self.ui.detailsView.size().width())
     segmentedImage = QImage(self.ui.detailsView.size().width(), self.ui.detailsView.size().width(),

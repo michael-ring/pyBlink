@@ -7,6 +7,15 @@ from syncDialog import syncDialog
 
 
 class remoteProjectSyncDialog(Ui_remoteProjectSyncDialog, QDialog):
+  # Session-level cache of rclone lookups, keyed by data source name.
+  # Populated on first read and reused for the rest of the app session.
+  # A fresh start of the app (new process) starts with an empty cache.
+  _sessionCache = {}
+
+  @classmethod
+  def clearSessionCache(cls):
+    cls._sessionCache = {}
+
   def cleanupDialog(self):
     self.progressBar_overall.setValue(0)
     self.label_done.setVisible(False)
@@ -51,29 +60,39 @@ class remoteProjectSyncDialog(Ui_remoteProjectSyncDialog, QDialog):
     super().open()
     try:
       self.progressBar_overall.setValue(25)
-      latestImageDirectories = {}
       for dataSource,config in self.imageCache.dataSources.items():
         if config['enabled']== False:
           continue
-        try:
-          files = rclone.ls(config['CachePath'], max_depth=1, dirs_only=True)
-        except utils.RcloneException as e:
-          print(e.error_msg)
-          files = []
-        try:
-          imageDirectories = rclone.ls(config['ImagesPath'], max_depth=2, dirs_only=True)
-        except utils.RcloneException as e:
-          print(e.error_msg)
-          imageDirectories = []
-        for imageDirectory in imageDirectories:
-          if imageDirectory['Path'].count('/') == 1:
-            #key=imageDirectory['Path'].split('/')[0]+"/"+imageDirectory['Path'].split('/')[1]
-            key=dataSource+'/'+imageDirectory['Path'].split('/')[0]
-            if key not in latestImageDirectories:
-              latestImageDirectories[key] = imageDirectory['Name']
-            else:
-              if latestImageDirectories[key] < imageDirectory['Name']:
+
+        if dataSource in remoteProjectSyncDialog._sessionCache:
+          cached = remoteProjectSyncDialog._sessionCache[dataSource]
+          files = cached['files']
+          latestImageDirectories = cached['latestImageDirectories']
+        else:
+          latestImageDirectories = {}
+          try:
+            files = rclone.ls(config['CachePath'], max_depth=1, dirs_only=True)
+          except utils.RcloneException as e:
+            print(e.error_msg)
+            files = []
+          try:
+            imageDirectories = rclone.ls(config['ImagesPath'], max_depth=2, dirs_only=True)
+          except utils.RcloneException as e:
+            print(e.error_msg)
+            imageDirectories = []
+          for imageDirectory in imageDirectories:
+            if imageDirectory['Path'].count('/') == 1:
+              key=dataSource+'/'+imageDirectory['Path'].split('/')[0]
+              if key not in latestImageDirectories:
                 latestImageDirectories[key] = imageDirectory['Name']
+              else:
+                if latestImageDirectories[key] < imageDirectory['Name']:
+                  latestImageDirectories[key] = imageDirectory['Name']
+              pass
+          remoteProjectSyncDialog._sessionCache[dataSource] = {
+            'files': files,
+            'latestImageDirectories': latestImageDirectories,
+          }
 
         self.progressBar_overall.setMaximum(len(files)+25)
         telescopeItems={}
@@ -81,11 +100,6 @@ class remoteProjectSyncDialog(Ui_remoteProjectSyncDialog, QDialog):
         item.setText(0, dataSource)
         telescopeItems[dataSource] = item
         for fileInfo in files:
-          #if fileInfo['Path'].count('/') == 0:
-          #  item = QTreeWidgetItem(self.treeWidget)
-          #  item.setText(0, fileInfo['Path'])
-          #  telescopeItems[fileInfo['Path']] = item
-          #if fileInfo['Path'].count('/') == 1:
           subItem = QTreeWidgetItem(telescopeItems[dataSource])
           subItem.setText(1, fileInfo['Path'])
           key=dataSource+'/'+fileInfo['Path']

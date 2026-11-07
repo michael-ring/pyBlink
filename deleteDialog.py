@@ -58,8 +58,8 @@ class deleteDialog(Ui_deleteDialog, QDialog):
           QtGui.QGuiApplication.processEvents()
           QtGui.QGuiApplication.processEvents()
           try:
-            #pass
-            rclone.delete(f"{images_path}/{targetImage}".replace('//','/'))
+            pass
+            #rclone.delete(f"{images_path}/{targetImage}".replace('//','/'))
           except utils.RcloneException as e:
             print(e.error_msg)
           self.progressBar_overall.setValue(0)
