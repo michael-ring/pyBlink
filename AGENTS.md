@@ -34,7 +34,7 @@ requires the `rclone` binary installed), `platformdirs` (cache location),
 
 | File | Role |
 |------|------|
-| `pyBlink.py` | `MainWindow`; wires up UI, image display, filtering radio buttons, and dialog actions. |
+| `pyBlink.py` | `MainWindow`; wires up UI, image display, filtering radio buttons, and dialog actions. Main-image clicks toggle fit-to-panel/1:1 display. |
 | `imageCache.py` | `imageCache` (QObject) — core model. Reads FITS headers/EXIF, stretches images, builds/persists the on-disk cache, emits Qt `Signal`s for progress. |
 | `createCache.py` | Standalone/batch cache generation from a FITS directory (uses `imageCache._safe_username`). |
 | `createCache.bat` | Windows helper that activates the venv and runs `createCache.py` (paths are machine-specific). |
@@ -70,13 +70,18 @@ requires the `rclone` binary installed), `platformdirs` (cache location),
   files next to the cache, so a frame's status is scoped to the reviewer.
   Only the current user's status file is written/synced (see `imageCache.py`,
   `syncDialog.py`, `localSyncDialog.py`).
+- The main `graphicsView` toggles between fit-to-panel and 1:1 when clicked.
+  The clicked image coordinate is centered where possible and clamped at
+  image edges; mode and focal image coordinates persist when selecting another
+  image. Keep keyboard focus on `tableWidget` rather than the image view.
 - `config.json` is user/local state — don't commit machine-specific values;
   update `config.json.sample` when adding new config keys.
 
 ## Notes for agents
 
-- There are no configured linters, formatters, or tests. Verify changes by
-  running the app manually.
+- There are no configured linters, formatters, or automated test suite. Verify
+  UI changes by running the app manually; synthetic image-view interactions can
+  also be checked with PySide6 using the offscreen Qt platform.
 - After editing any `.ui` file, run `./compileDesigns.sh` and include the
   regenerated `ui_*.py`.
 - Keep changes surgical; the code mixes model and Qt widget logic closely.
